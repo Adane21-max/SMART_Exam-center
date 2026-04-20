@@ -19,13 +19,13 @@ const Home = () => {
 >
   <div style={{ maxWidth: '500px', textAlign: 'left' }}>
     <h1 style={{ fontSize: '50px', marginBottom: '20px', fontWeight: '700' }}>
-      Ada21tech Exam-Center 
+      SMART Exam-Center 
     </h1>
     <h1 style={{ fontSize: '45px', marginBottom: '20px', fontWeight: '700' }}>
       Practical Learning for Students
     </h1>
     <p style={{ fontSize: '24px', marginBottom: '30px', opacity: '0.95' }}>
-      Master Your Grades 6–12 Exams with Ada21Tech
+      Master Your Exams with Us
     </p>
     <Link to="/register">
       <button
@@ -65,7 +65,7 @@ const Home = () => {
       {/* Features Section */}
       <section style={{ padding: '60px 20px', maxWidth: '1200px', margin: '0 auto' }}>
         <h2 style={{ textAlign: 'center', fontSize: '36px', marginBottom: '50px', color: '#1e3c72' }}>
-          Why Choose Ada21Tech?
+          Why Choose SMART?
         </h2>
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '30px' }}>
           {[
@@ -168,7 +168,7 @@ const Home = () => {
           Ready to Boost Your Grades?
         </h2>
         <p style={{ fontSize: '18px', color: '#4a5568', marginBottom: '30px' }}>
-          Join thousands of Ethiopian students mastering their exams with Ada21Tech.
+          Join thousands of Ethiopian students mastering their exams with SMART.
         </p>
         <Link to="/register">
           <button
@@ -198,7 +198,7 @@ const Home = () => {
           textAlign: 'center',
         }}
       >
-        <p>© 2026 Ada21Tech — Practical Learning for Ethiopian Students</p>
+        <p>© 2026 SMART Exam Center — Practical Learning for Ethiopian Students</p>
         <p style={{ marginTop: '10px', fontSize: '14px' }}>
           Contact: support@ada21tech.com |  0936592186 (Adane F)
         </p>
