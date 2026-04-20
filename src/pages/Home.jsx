@@ -200,7 +200,7 @@ const Home = () => {
       >
         <p>© 2026 SMART Exam Center — Practical Learning for Ethiopian Students</p>
         <p style={{ marginTop: '10px', fontSize: '14px' }}>
-          Contact: support@ada21tech.com |  0936592186 (Adane F)
+          Contact: support@smartexamcenter.com |  0936592186 (Adane F)
         </p>
       </footer>
     </div>
