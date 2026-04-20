@@ -42,26 +42,45 @@ const QuestionTypes = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const payload = {
-      ...form,
-      total_time: form.total_time ? parseInt(form.total_time) : null,
-      start_date: form.start_date || null,
-      end_date: form.end_date || null
-    };
-    try {
-      if (editingId) {
-        await api.put(`/question-types/${editingId}`, payload);
-      } else {
-        await api.post('/question-types', payload);
-      }
-      setForm({ name: '', grade: 9, subject_id: '', total_time: '', is_visible: true, start_date: '', end_date: '' });
-      setEditingId(null);
-      fetchTypes();
-    } catch (err) {
-      alert('Error saving question type');
+  e.preventDefault();
+  if (!typeIdFromUrl) {
+    alert('No question type selected');
+    return;
+  }
+
+  // Fields allowed when editing (do NOT include id, created_at, type_id, grade, level)
+  const allowedFields = [
+    'question', 'optionA', 'optionB', 'optionC', 'optionD',
+    'correct_answer', 'explanation', 'time_limit'
+  ];
+
+  const payload = {};
+  allowedFields.forEach(field => {
+    if (form[field] !== undefined) {
+      payload[field] = field === 'time_limit' && form[field]
+        ? parseInt(form[field])
+        : form[field];
     }
-  };
+  });
+
+  try {
+    if (editingId) {
+      // EDIT – send only allowed fields
+      await api.put(`/questions/${editingId}`, payload);
+    } else {
+      // ADD – include type_id and grade
+      await api.post('/questions', {
+        ...payload,
+        type_id: typeIdFromUrl,
+        grade: typeInfo?.grade || 9
+      });
+    }
+    resetForm();
+    fetchQuestions();
+  } catch (err) {
+    alert('Error saving question: ' + (err.response?.data?.message || err.message));
+  }
+};
 
   const handleEdit = (type) => {
     setForm({
