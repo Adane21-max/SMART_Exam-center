@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import api from '../../api/axios';
 
 const StudentDashboard = () => {
-  const { user, logout, refreshKey } = useAuth();   // ✅ FIX 1: Added refreshKey
+  const { user, logout, refreshKey } = useAuth();
   const navigate = useNavigate();
   const [announcements, setAnnouncements] = useState([]);
   const [quizTypes, setQuizTypes] = useState([]);
@@ -16,20 +16,25 @@ const StudentDashboard = () => {
   const [attempts, setAttempts] = useState([]);
   const [reviewAttempt, setReviewAttempt] = useState(null);
   const [reviewQuestions, setReviewQuestions] = useState([]);
+  
+  // ✅ NEW: Leaderboard state
+  const [leaderboard, setLeaderboard] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [annRes, subjectsRes, typesRes, attemptsRes] = await Promise.all([
+        const [annRes, subjectsRes, typesRes, attemptsRes, leaderRes] = await Promise.all([
           api.get('/announcements'),
           api.get('/subjects'),
           api.get(`/question-types/visible?grade=${user?.grade}`),
-          api.get('/attempts')
+          api.get('/attempts'),
+          api.get('/students/leaderboard')   // ✅ fetch leaderboard
         ]);
         setAnnouncements(annRes.data);
         setSubjects(subjectsRes.data);
         setQuizTypes(typesRes.data);
         setAttempts(attemptsRes.data);
+        setLeaderboard(leaderRes.data);       // ✅ set leaderboard
         console.log('Attempts received:', attemptsRes.data);
       } catch (err) {
         console.error('Failed to fetch dashboard data', err);
@@ -38,7 +43,7 @@ const StudentDashboard = () => {
       }
     };
     if (user?.grade) fetchData();
-  }, [user, refreshKey]);   // ✅ FIX 2: Added refreshKey to dependencies
+  }, [user, refreshKey]);
 
   const handleTakeQuizClick = () => {
     if (user?.status !== 'approved') {
@@ -141,7 +146,7 @@ const StudentDashboard = () => {
               border: 'none',
               padding: '10px 20px',
               borderRadius: '30px',
-              fontSize: '34px',
+              fontSize: '14px',
               fontWeight: '500',
               color: '#2a5298',
               cursor: 'pointer',
@@ -294,10 +299,8 @@ const StudentDashboard = () => {
                       ) : (
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '16px' }}>
                           {subjectQuizzes.map(type => {
-                            // ✅ FIX 3: Force numeric comparison
                             const existingAttempt = attempts.find(a => Number(a.type_id) === Number(type.id));
                             if (existingAttempt) {
-                              // Completed quiz – Review card
                               return (
                                 <div
                                   key={type.id}
@@ -342,7 +345,6 @@ const StudentDashboard = () => {
                                 </div>
                               );
                             }
-                            // Not attempted – Take Quiz card
                             return (
                               <div
                                 key={type.id}
@@ -430,6 +432,48 @@ const StudentDashboard = () => {
               </button>
             </div>
           )}
+
+          {/* ✅ LEADERBOARD CARD - NEW */}
+          <div style={{
+            background: '#ffffff',
+            borderRadius: '20px',
+            padding: '20px',
+            marginBottom: '24px',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
+            border: '1px solid #eef2f6'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+              <span style={{ fontSize: '24px' }}>🏆</span>
+              <h3 style={{ margin: 0, fontSize: '18px', color: '#1e3c72', fontWeight: '600' }}>Top Performers</h3>
+            </div>
+            {leaderboard.length === 0 ? (
+              <p style={{ color: '#6b7280', fontSize: '14px' }}>No data yet.</p>
+            ) : (
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid #e5e7eb', color: '#6b7280' }}>
+                    <th style={{ textAlign: 'left', paddingBottom: '8px' }}>#</th>
+                    <th style={{ textAlign: 'left', paddingBottom: '8px' }}>Student</th>
+                    <th style={{ textAlign: 'center', paddingBottom: '8px' }}>Subj</th>
+                    <th style={{ textAlign: 'center', paddingBottom: '8px' }}>T</th>
+                    <th style={{ textAlign: 'center', paddingBottom: '8px' }}>Avg</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {leaderboard.map((entry, idx) => (
+                    <tr key={idx} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                      <td style={{ padding: '8px 0', fontWeight: '500' }}>{idx + 1}</td>
+                      <td style={{ padding: '8px 0' }}>{entry.username}</td>
+                      <td style={{ textAlign: 'center', padding: '8px 0' }}>{entry.subject_count}</td>
+                      <td style={{ textAlign: 'center', padding: '8px 0' }}>{entry.T}</td>
+                      <td style={{ textAlign: 'center', padding: '8px 0', fontWeight: '600', color: '#2a5298' }}>{entry.Avg}%</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+
           <div style={{
             background: '#fff',
             borderRadius: '20px',
@@ -462,34 +506,36 @@ const StudentDashboard = () => {
           </div>
         </div>
       </div>
+
       {/* Contact & Support */}
-<div style={{
-  background: '#ffffff',
-  borderRadius: '20px',
-  padding: '24px',
-  marginTop: '24px',
-  boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
-  border: '1px solid #eef2f6'
-}}>
-  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-    <span style={{ fontSize: '28px' }}>📞</span>
-    <h2 style={{ margin: 0, fontSize: '18px', color: '#1e3c72', fontWeight: '600' }}>Contact & Support</h2>
-  </div>
-  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-      <span style={{ fontSize: '18px' }}>📱</span>
-      <span style={{ color: '#4b5563', fontSize: '14px' }}>Phone: 0936592186 (Adane F)</span>
-    </div>
-    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-      <span style={{ fontSize: '18px' }}>📧</span>
-      <span style={{ color: '#4b5563', fontSize: '14px' }}>adaneferede6@gmail.com</span>
-    </div>
-    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-      <span style={{ fontSize: '18px' }}>⏰</span>
-      <span style={{ color: '#4b5563', fontSize: '14px' }}>Mon - Fri, 10:00 - 12:30 local time and Sat - Sun, 2:00 - 12:00 local time</span>
-    </div>
-  </div>
-</div>
+      <div style={{
+        background: '#ffffff',
+        borderRadius: '20px',
+        padding: '24px',
+        marginTop: '24px',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
+        border: '1px solid #eef2f6'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+          <span style={{ fontSize: '28px' }}>📞</span>
+          <h2 style={{ margin: 0, fontSize: '18px', color: '#1e3c72', fontWeight: '600' }}>Contact & Support</h2>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span style={{ fontSize: '18px' }}>📱</span>
+            <span style={{ color: '#4b5563', fontSize: '14px' }}>Phone: 0936592186 (Adane F)</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span style={{ fontSize: '18px' }}>📧</span>
+            <span style={{ color: '#4b5563', fontSize: '14px' }}>adaneferede6@gmail.com</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span style={{ fontSize: '18px' }}>⏰</span>
+            <span style={{ color: '#4b5563', fontSize: '14px' }}>Mon - Fri, 10:00 - 12:30 local time and Sat - Sun, 2:00 - 12:00 local time</span>
+          </div>
+        </div>
+      </div>
+
       {/* Payment Modal */}
       {showPayment && (
         <div style={{
