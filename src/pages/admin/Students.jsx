@@ -31,11 +31,12 @@ const Students = () => {
     }
   };
 
+  // ✅ DELETE HANDLER
   const handleDelete = async (id, username) => {
     if (window.confirm(`Permanently delete ${username} and all their data? This cannot be undone.`)) {
       try {
         await api.delete(`/students/${id}`);
-        fetchStudents(); // ✅ CORRECTED: use the actual function name
+        fetchStudents(); // refresh the list
       } catch (err) {
         alert('Failed to delete student');
       }
@@ -67,7 +68,6 @@ const Students = () => {
     );
   };
 
-  // Count students per grade
   const gradeCounts = {};
   for (let g = 6; g <= 12; g++) gradeCounts[g] = 0;
   students.forEach(s => { if (gradeCounts[s.grade] !== undefined) gradeCounts[s.grade]++; });
@@ -165,6 +165,7 @@ const Students = () => {
                           <option value="approved">Approved</option>
                           <option value="rejected">Suspended</option>
                         </select>
+                        {/* ✅ DELETE BUTTON */}
                         <button
                           onClick={() => handleDelete(s.id, s.username)}
                           style={{
