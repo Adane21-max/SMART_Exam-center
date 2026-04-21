@@ -444,7 +444,7 @@ const StudentDashboard = () => {
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
               <span style={{ fontSize: '24px' }}>🏆</span>
-              <h3 style={{ margin: 0, fontSize: '18px', color: '#1e3c72', fontWeight: '600' }}>Top Performers</h3>
+              <h3 style={{ margin: 0, fontSize: '18px', color: '#1e3c72', fontWeight: '600' }}>Top Performers— Grade {user?.grade} </h3>
             </div>
             {leaderboard.length === 0 ? (
               <p style={{ color: '#6b7280', fontSize: '14px' }}>No data yet.</p>
