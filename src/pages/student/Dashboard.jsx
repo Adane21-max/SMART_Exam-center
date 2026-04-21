@@ -20,30 +20,30 @@ const StudentDashboard = () => {
   // ✅ NEW: Leaderboard state
   const [leaderboard, setLeaderboard] = useState([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [annRes, subjectsRes, typesRes, attemptsRes, leaderRes] = await Promise.all([
-          api.get('/announcements'),
-          api.get('/subjects'),
-          api.get(`/question-types/visible?grade=${user?.grade}`),
-          api.get('/attempts'),
-          api.get('/students/leaderboard')   // ✅ fetch leaderboard
-        ]);
-        setAnnouncements(annRes.data);
-        setSubjects(subjectsRes.data);
-        setQuizTypes(typesRes.data);
-        setAttempts(attemptsRes.data);
-        setLeaderboard(leaderRes.data);       // ✅ set leaderboard
-        console.log('Attempts received:', attemptsRes.data);
-      } catch (err) {
-        console.error('Failed to fetch dashboard data', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    if (user?.grade) fetchData();
-  }, [user, refreshKey]);
+ useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const [annRes, subjectsRes, typesRes, attemptsRes, leaderRes] = await Promise.all([
+        api.get('/announcements'),
+        api.get('/subjects'),
+        api.get(`/question-types/visible?grade=${user?.grade}`),
+        api.get('/attempts'),
+        api.get(`/students/leaderboard?grade=${user?.grade}`)   // ✅ Filter by grade
+      ]);
+      setAnnouncements(annRes.data);
+      setSubjects(subjectsRes.data);
+      setQuizTypes(typesRes.data);
+      setAttempts(attemptsRes.data);
+      setLeaderboard(leaderRes.data);
+      console.log('Attempts received:', attemptsRes.data);
+    } catch (err) {
+      console.error('Failed to fetch dashboard data', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  if (user?.grade) fetchData();
+}, [user, refreshKey]);
 
   const handleTakeQuizClick = () => {
     if (user?.status !== 'approved') {
