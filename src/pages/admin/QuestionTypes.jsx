@@ -41,46 +41,28 @@ const QuestionTypes = () => {
     setSubjects(res.data);
   };
 
+  // ✅ FIXED: Correct handleSubmit for editing Question Types
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  if (!typeIdFromUrl) {
-    alert('No question type selected');
-    return;
-  }
-
-  // Fields allowed when editing (do NOT include id, created_at, type_id, grade, level)
-  const allowedFields = [
-    'question', 'optionA', 'optionB', 'optionC', 'optionD',
-    'correct_answer', 'explanation', 'time_limit'
-  ];
-
-  const payload = {};
-  allowedFields.forEach(field => {
-    if (form[field] !== undefined) {
-      payload[field] = field === 'time_limit' && form[field]
-        ? parseInt(form[field])
-        : form[field];
+    e.preventDefault();
+    const payload = {
+      ...form,
+      total_time: form.total_time ? parseInt(form.total_time) : null,
+      start_date: form.start_date || null,
+      end_date: form.end_date || null
+    };
+    try {
+      if (editingId) {
+        await api.put(`/question-types/${editingId}`, payload);
+      } else {
+        await api.post('/question-types', payload);
+      }
+      setForm({ name: '', grade: 9, subject_id: '', total_time: '', is_visible: true, start_date: '', end_date: '' });
+      setEditingId(null);
+      fetchTypes(); // refresh the list
+    } catch (err) {
+      alert('Error saving question type');
     }
-  });
-
-  try {
-    if (editingId) {
-      // EDIT – send only allowed fields
-      await api.put(`/questions/${editingId}`, payload);
-    } else {
-      // ADD – include type_id and grade
-      await api.post('/questions', {
-        ...payload,
-        type_id: typeIdFromUrl,
-        grade: typeInfo?.grade || 9
-      });
-    }
-    resetForm();
-    fetchQuestions();
-  } catch (err) {
-    alert('Error saving question: ' + (err.response?.data?.message || err.message));
-  }
-};
+  };
 
   const handleEdit = (type) => {
     setForm({
@@ -111,7 +93,7 @@ const QuestionTypes = () => {
     }
   };
 
-  // Quick Add Handlers
+  // Quick Add Handlers (unchanged)
   const handleQuickAddSubmit = async (e) => {
     e.preventDefault();
     if (!bulkText.trim()) {
@@ -279,42 +261,42 @@ C`;
 
       {/* Table */}
       <table border="1" cellPadding="8">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Grade</th>
-      <th>Subject</th>
-      <th>Total Time (s)</th>
-      <th>Start</th>
-      <th>End</th>
-      <th>Visible</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    {types.map(t => (
-      <tr key={t.id}>
-        <td>{t.name}</td>
-        <td>{t.grade}</td>
-        <td>{t.subject_name}</td>
-        <td>{t.total_time || '-'}</td>
-        <td>{t.start_date ? new Date(t.start_date).toLocaleString() : '-'}</td>
-        <td>{t.end_date ? new Date(t.end_date).toLocaleString() : '-'}</td>
-        <td>{t.is_visible ? '✅' : '❌'}</td>
-        <td>
-          <button onClick={() => handleEdit(t)}>Edit</button>
-          <button onClick={() => toggleVisibility(t.id, t.is_visible)}>
-            {t.is_visible ? 'Hide' : 'Show'}
-          </button>
-          <button onClick={() => handleDelete(t.id)}>Delete</button>
-          <button onClick={() => window.location.href = `/admin/questions?type_id=${t.id}`}>
-            Manage Questions
-          </button>
-        </td>
-      </tr>
-    ))}
-  </tbody>
-</table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Grade</th>
+            <th>Subject</th>
+            <th>Total Time (s)</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Visible</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {types.map(t => (
+            <tr key={t.id}>
+              <td>{t.name}</td>
+              <td>{t.grade}</td>
+              <td>{t.subject_name}</td>
+              <td>{t.total_time || '-'}</td>
+              <td>{t.start_date ? new Date(t.start_date).toLocaleString() : '-'}</td>
+              <td>{t.end_date ? new Date(t.end_date).toLocaleString() : '-'}</td>
+              <td>{t.is_visible ? '✅' : '❌'}</td>
+              <td>
+                <button onClick={() => handleEdit(t)}>Edit</button>
+                <button onClick={() => toggleVisibility(t.id, t.is_visible)}>
+                  {t.is_visible ? 'Hide' : 'Show'}
+                </button>
+                <button onClick={() => handleDelete(t.id)}>Delete</button>
+                <button onClick={() => window.location.href = `/admin/questions?type_id=${t.id}`}>
+                  Manage Questions
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
       {/* Quick Add Modal */}
       {showQuickAdd && (
