@@ -571,7 +571,7 @@ const StudentDashboard = () => {
               />
               <input
                 type="text"
-                placeholder="Transaction Reference / ID"
+                placeholder="Transaction number / ID   Eg: DCP98AMS1Z"
                 value={transactionRef}
                 onChange={(e) => setTransactionRef(e.target.value)}
                 required
