@@ -191,48 +191,60 @@ const TakeQuiz = () => {
           </button>
         </div>
 
-        <h2 style={{ color: '#1e3c72', marginBottom: '20px' }}>Review Your Answers</h2>
-        {questions.map((q, idx) => (
-          <div key={q.id} style={{
-            background: '#fff',
-            borderRadius: '16px',
-            padding: '20px',
-            marginBottom: '20px',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-            border: '1px solid #eef2f6'
-          }}>
-            <p style={{ fontWeight: '600', fontSize: '16px', marginBottom: '15px' }}>
-              {idx + 1}. {q.question}
-            </p>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '15px' }}>
-              {['A', 'B', 'C', 'D'].map(opt => {
-                const isUserAnswer = answers[q.id] === opt;
-                const isCorrect = q.correct_answer === opt;
-                let background = '#f9fafb';
-                if (isUserAnswer && isCorrect) background = '#d1fae5';
-                else if (isUserAnswer && !isCorrect) background = '#fee2e2';
-                else if (isCorrect) background = '#d1fae5';
-                return (
-                  <div key={opt} style={{
-                    background,
-                    padding: '12px',
-                    borderRadius: '10px',
-                    border: isUserAnswer ? '2px solid #2a5298' : '1px solid #e5e7eb'
-                  }}>
-                    <strong>{opt}:</strong> {q[`option${opt}`]}
-                    {isUserAnswer && <span style={{ marginLeft: '10px', fontWeight: 'bold' }}> (Your answer)</span>}
-                    {isCorrect && <span style={{ marginLeft: '10px', color: '#059669' }}> ✓</span>}
-                  </div>
-                );
-              })}
-            </div>
-            {q.explanation && (
-              <div style={{ background: '#f0f4ff', padding: '12px', borderRadius: '10px', fontSize: '14px' }}>
-                <strong>Explanation:</strong> {q.explanation}
+                <h2 style={{ color: '#1e3c72', marginBottom: '20px' }}>Review Your Answers</h2>
+        {questions.map((q, idx) => {
+          const studentAnswer = answers[q.id];
+          const isCorrect = studentAnswer === q.correct_answer;
+          const isAnswered = studentAnswer !== null && studentAnswer !== undefined;
+
+          return (
+            <div key={q.id} style={{
+              background: '#fff',
+              borderRadius: '16px',
+              padding: '20px',
+              marginBottom: '20px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+              border: '1px solid #eef2f6'
+            }}>
+              <p style={{ fontWeight: '600', fontSize: '16px', marginBottom: '15px' }}>
+                {idx + 1}. {q.question}
+              </p>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '15px' }}>
+                {['A', 'B', 'C', 'D'].map(opt => {
+                  const isCorrectOption = q.correct_answer === opt;
+                  const isStudentChoice = studentAnswer === opt;
+
+                  let background = '#f9fafb';
+                  if (isStudentChoice && isCorrect) background = '#d1fae5';      // green – correct
+                  else if (isStudentChoice && !isCorrect) background = '#fee2e2'; // red – wrong
+                  else if (isCorrectOption) background = '#d1fae5';               // show correct answer
+
+                  return (
+                    <div
+                      key={opt}
+                      style={{
+                        padding: '12px',
+                        background,
+                        borderRadius: '10px',
+                        border: isStudentChoice ? '2px solid #2a5298' : '1px solid #e5e7eb'
+                      }}
+                    >
+                      <strong>{opt}:</strong> {q[`option${opt}`]}
+                      {isCorrectOption && <span style={{ marginLeft: '8px', color: '#059669' }}>✓</span>}
+                      {isStudentChoice && !isCorrect && <span style={{ marginLeft: '8px', color: '#dc2626' }}>✗ (Your answer)</span>}
+                    </div>
+                  );
+                })}
               </div>
-            )}
-          </div>
-        ))}
+              {!isAnswered && <p style={{ color: '#6b7280', fontStyle: 'italic' }}>You did not answer this question.</p>}
+              {q.explanation && (
+                <div style={{ background: '#f0f4ff', padding: '12px', borderRadius: '10px', fontSize: '14px' }}>
+                  <strong>Explanation:</strong> {q.explanation}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     );
   }
