@@ -100,31 +100,34 @@ const TakeQuiz = () => {
     setAnswers({ ...answers, [questionId]: answer });
   };
 
-  const handleSubmit = async () => {
-    clearTimeout(timerRef.current);
-    const timeTaken = Math.floor((Date.now() - startTime) / 1000);
+const handleSubmit = async () => {
+  clearTimeout(timerRef.current);
+  const timeTaken = Math.floor((Date.now() - startTime) / 1000);
 
-    let correct = 0;
-    questions.forEach(q => {
-      if (answers[q.id] === q.correct_answer) correct++;
+  let correct = 0;
+  questions.forEach(q => {
+    if (answers[q.id] === q.correct_answer) correct++;
+  });
+
+  try {
+    // Save first – only then show the review
+    await api.post('/attempts', {
+      type_id: typeId,
+      score: correct,
+      total_questions: questions.length,
+      time_taken: timeTaken,
+      answers: answers
     });
-    setScore(correct);
-    setSubmitted(true);   // show review screen immediately
 
-    // Save attempt in background – do NOT navigate away
-    try {
-      await api.post('/attempts', {
-        type_id: typeId,
-        score: correct,
-        total_questions: questions.length,
-        time_taken: timeTaken,
-        answers: answers
-      });
-      if (triggerRefresh) triggerRefresh();
-    } catch (err) {
-      console.error('Failed to save attempt', err);
-    }
-  };
+    setScore(correct);
+    setSubmitted(true);
+    if (triggerRefresh) triggerRefresh();
+  } catch (err) {
+    console.error('Failed to save attempt', err);
+    alert('Failed to save your attempt. Please try again.');
+    // Stay on the quiz screen so they can re‑submit
+  }
+};
 
   const formatTime = (seconds) => {
     if (seconds === null) return 'No time limit';
