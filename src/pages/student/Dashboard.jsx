@@ -22,16 +22,18 @@ const StudentDashboard = () => {
   useEffect(() => {
   const fetchData = async () => {
     try {
-      const [annRes, subjectsRes, typesRes, attemptsRes] = await Promise.all([
+      const [annRes, subjectsRes, typesRes, attemptsRes, leaderRes] = await Promise.all([
         api.get('/announcements'),
         api.get('/subjects'),
         api.get(`/question-types/visible?grade=${user?.grade}`),
-        api.get('/attempts')   // ✅ NEW
+        api.get('/attempts'),
+        api.get(`/students/leaderboard?grade=${user?.grade}`)   // ✅ NEW
       ]);
       setAnnouncements(annRes.data);
       setSubjects(subjectsRes.data);
       setQuizTypes(typesRes.data);
-      setAttempts(attemptsRes.data);   // ✅ NEW
+      setAttempts(attemptsRes.data);
+      setLeaderboard(leaderRes.data);                           // ✅ SET IT
       console.log('Attempts received:', attemptsRes.data);
     } catch (err) {
       console.error('Failed to fetch dashboard data', err);
