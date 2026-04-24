@@ -110,7 +110,7 @@ const handleSubmit = async () => {
   });
 
   try {
-    // Save first – only then show the review
+    // Save attempt FIRST
     await api.post('/attempts', {
       type_id: typeId,
       score: correct,
@@ -119,13 +119,15 @@ const handleSubmit = async () => {
       answers: answers
     });
 
+    // Only after successful save, show review
     setScore(correct);
     setSubmitted(true);
     if (triggerRefresh) triggerRefresh();
   } catch (err) {
     console.error('Failed to save attempt', err);
-    alert('Failed to save your attempt. Please try again.');
-    // Stay on the quiz screen so they can re‑submit
+    const message = err.response?.data?.message || 'Failed to save your attempt. Please try again.';
+    alert(message);
+    // Stay on the quiz page — user can try again or go back
   }
 };
 
