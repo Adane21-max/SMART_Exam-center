@@ -6,7 +6,7 @@ const QuestionTypes = () => {
   const [subjects, setSubjects] = useState([]);
   const [form, setForm] = useState({
     name: '', grade: 9, subject_id: '', total_time: '', is_visible: true,
-    start_date: '', end_date: ''
+    start_date: '', end_date: '', level: 1   // ✅ level field added
   });
   const [editingId, setEditingId] = useState(null);
   const [filterGrade, setFilterGrade] = useState('');
@@ -22,6 +22,7 @@ const QuestionTypes = () => {
   const [quickAddError, setQuickAddError] = useState('');
   const [quickAddSuccess, setQuickAddSuccess] = useState('');
   const [quickAdding, setQuickAdding] = useState(false);
+  const [quickAddLevel, setQuickAddLevel] = useState(1);      // ✅ new state
 
   useEffect(() => {
     fetchTypes();
@@ -41,7 +42,6 @@ const QuestionTypes = () => {
     setSubjects(res.data);
   };
 
-  // ✅ FIXED: Correct handleSubmit for editing Question Types
   const handleSubmit = async (e) => {
     e.preventDefault();
     const payload = {
@@ -56,9 +56,10 @@ const QuestionTypes = () => {
       } else {
         await api.post('/question-types', payload);
       }
-      setForm({ name: '', grade: 9, subject_id: '', total_time: '', is_visible: true, start_date: '', end_date: '' });
+      // Reset form (including level)
+      setForm({ name: '', grade: 9, subject_id: '', total_time: '', is_visible: true, start_date: '', end_date: '', level: 1 });
       setEditingId(null);
-      fetchTypes(); // refresh the list
+      fetchTypes();
     } catch (err) {
       alert('Error saving question type');
     }
@@ -72,7 +73,8 @@ const QuestionTypes = () => {
       total_time: type.total_time || '',
       is_visible: type.is_visible,
       start_date: type.start_date ? type.start_date.slice(0, 16) : '',
-      end_date: type.end_date ? type.end_date.slice(0, 16) : ''
+      end_date: type.end_date ? type.end_date.slice(0, 16) : '',
+      level: type.level || 1   // ✅ include level
     });
     setEditingId(type.id);
   };
@@ -93,7 +95,6 @@ const QuestionTypes = () => {
     }
   };
 
-  // Quick Add Handlers (unchanged)
   const handleQuickAddSubmit = async (e) => {
     e.preventDefault();
     if (!bulkText.trim()) {
@@ -147,7 +148,8 @@ const QuestionTypes = () => {
           total_time: null,
           is_visible: true,
           start_date: null,
-          end_date: null
+          end_date: null,
+          level: quickAddLevel   // ✅ include level
         });
         typeId = typeRes.data.id;
         fetchTypes();
@@ -179,6 +181,7 @@ const QuestionTypes = () => {
       setQuickAddTypeName('');
       setQuickAddNewSubject('');
       setQuickAddSubjectId('');
+      setQuickAddLevel(1);   // ✅ reset level
     } catch (err) {
       setQuickAddError(err.message || 'Failed to add questions');
     } finally {
@@ -249,6 +252,12 @@ C`;
           <option value="">Select Subject</option>
           {subjects.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
         </select>
+
+        {/* ✅ Level selector */}
+        <select value={form.level} onChange={(e) => setForm({...form, level: parseInt(e.target.value)})}>
+          {[1, 2, 3, 4, 5].map(lv => <option key={lv} value={lv}>Level {lv}</option>)}
+        </select>
+
         <input type="number" placeholder="Total Time (seconds)" value={form.total_time} onChange={(e) => setForm({...form, total_time: e.target.value})} />
         <input type="datetime-local" placeholder="Start Date" value={form.start_date} onChange={(e) => setForm({...form, start_date: e.target.value})} />
         <input type="datetime-local" placeholder="End Date" value={form.end_date} onChange={(e) => setForm({...form, end_date: e.target.value})} />
@@ -256,7 +265,7 @@ C`;
           <input type="checkbox" checked={form.is_visible} onChange={(e) => setForm({...form, is_visible: e.target.checked})} /> Visible
         </label>
         <button type="submit">{editingId ? 'Update' : 'Create'}</button>
-        {editingId && <button type="button" onClick={() => { setEditingId(null); setForm({ name: '', grade: 9, subject_id: '', total_time: '', is_visible: true, start_date: '', end_date: '' }); }}>Cancel</button>}
+        {editingId && <button type="button" onClick={() => { setEditingId(null); setForm({ name: '', grade: 9, subject_id: '', total_time: '', is_visible: true, start_date: '', end_date: '', level: 1 }); }}>Cancel</button>}
       </form>
 
       {/* Table */}
@@ -266,6 +275,7 @@ C`;
             <th>Name</th>
             <th>Grade</th>
             <th>Subject</th>
+            <th>Level</th>   {/* ✅ new column */}
             <th>Total Time (s)</th>
             <th>Start</th>
             <th>End</th>
@@ -279,6 +289,7 @@ C`;
               <td>{t.name}</td>
               <td>{t.grade}</td>
               <td>{t.subject_name}</td>
+              <td>{t.level || 1}</td>   {/* ✅ show level */}
               <td>{t.total_time || '-'}</td>
               <td>{t.start_date ? new Date(t.start_date).toLocaleString() : '-'}</td>
               <td>{t.end_date ? new Date(t.end_date).toLocaleString() : '-'}</td>
@@ -322,6 +333,14 @@ C`;
               <label>Or new subject:
                 <input type="text" placeholder="e.g., Mathematics" value={quickAddNewSubject} onChange={(e) => setQuickAddNewSubject(e.target.value)} disabled={!!quickAddSubjectId} />
               </label>
+
+              {/* ✅ Level selector for Quick Add */}
+              <label>Level:
+                <select value={quickAddLevel} onChange={(e) => setQuickAddLevel(parseInt(e.target.value))} style={{ marginLeft: '10px' }}>
+                  {[1, 2, 3, 4, 5].map(lv => <option key={lv} value={lv}>Level {lv}</option>)}
+                </select>
+              </label>
+
               <label><strong>Quiz Type Name *</strong>
                 <input type="text" placeholder="e.g., Model 1, Final Exam" value={quickAddTypeName} onChange={(e) => setQuickAddTypeName(e.target.value)} required style={{ width: '100%', marginTop: '5px' }} />
                 <small style={{ color: '#6b7280' }}>This will create a separate quiz students can select.</small>
