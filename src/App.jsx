@@ -14,7 +14,8 @@ import Questions from './pages/admin/Questions';
 import FreeTrial from './pages/admin/FreeTrial';
 import Announcements from './pages/admin/Announcements';
 import QuestionTypes from './pages/admin/QuestionTypes';
-import Payments from './pages/admin/Payments';   // <-- NEW
+import Payments from './pages/admin/Payments';
+import UpgradeRequests from './pages/admin/UpgradeRequests';   // <-- NEW
 
 // Student pages
 import StudentDashboard from './pages/student/Dashboard';
@@ -103,12 +104,22 @@ const App = () => {
           </div>
         </PrivateRoute>
       } />
-      <Route path="/admin/payments" element={   // <-- NEW
+      <Route path="/admin/payments" element={
         <PrivateRoute adminOnly>
           <div style={{ display: 'flex' }}>
             <Sidebar />
             <div style={{ marginLeft: '250px', padding: '20px', width: '100%' }}>
               <Payments />
+            </div>
+          </div>
+        </PrivateRoute>
+      } />
+      <Route path="/admin/upgrade-requests" element={   // <-- NEW ROUTE
+        <PrivateRoute adminOnly>
+          <div style={{ display: 'flex' }}>
+            <Sidebar />
+            <div style={{ marginLeft: '250px', padding: '20px', width: '100%' }}>
+              <UpgradeRequests />
             </div>
           </div>
         </PrivateRoute>
