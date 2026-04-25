@@ -20,6 +20,7 @@ const Sidebar = () => {
     { path: '/admin/free-trial', label: 'Free Trial' },
     { path: '/admin/announcements', label: 'Announcements' },
     { path: '/admin/payments', label: 'Payments' },
+    { path: '/admin/upgrade-requests', label: 'Upgrade Requests' },   // <-- NEW
   ];
 
   return (
