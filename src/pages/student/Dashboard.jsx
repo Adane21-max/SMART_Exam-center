@@ -274,6 +274,7 @@ setHasGlobalPending(pendingRes.data.pending || false);
               📝 Take Quizzes
             </button>
           </div>
+          <p style={{color:'red', fontWeight:'bold'}}>UPGRADE BOX TEST</p>
                      {/* Global Upgrade Box */}
           {user?.status === 'approved' && (() => {
             const levelQuizzes = quizTypes.filter(q => q.level === globalLevel);
