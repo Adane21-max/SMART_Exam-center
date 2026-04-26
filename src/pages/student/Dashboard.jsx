@@ -138,6 +138,16 @@ setHasGlobalPending(pendingRes.data.pending || false);
               Grade {user?.grade}
             </span>
             <span style={{
+  background: '#e8f0fe',
+  padding: '4px 12px',
+  borderRadius: '20px',
+  fontSize: '14px',
+  fontWeight: '500',
+  color: '#2a5298'
+}}>
+  Level {globalLevel}
+</span>
+            <span style={{
               background: user?.status === 'approved' ? '#d1fae5' : '#fef3c7',
               padding: '4px 12px',
               borderRadius: '20px',
