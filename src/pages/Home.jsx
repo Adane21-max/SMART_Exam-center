@@ -199,9 +199,9 @@ const Home = () => {
         }}
       >
         <p>© 2026 SMART Exam Center — Practical Learning for Ethiopian Students</p>
-        <p style={{ marginTop: '10px', fontSize: '14px' }}>
-          Contact: support@smartexamcenter.com |  0936592186 (Adane F)
-        </p>
+<p style={{ marginTop: '10px', fontSize: '14px' }}>
+  Contact: <a href="https://t.me/SMART_exam_center" target="_blank" rel="noopener noreferrer" style={{ color: '#4b5563', textDecoration: 'underline' }}>Join our Telegram Group</a> | 0936592186 (Adane F)
+</p>
       </footer>
     </div>
   );
