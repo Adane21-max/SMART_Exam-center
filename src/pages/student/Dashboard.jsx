@@ -614,33 +614,58 @@ setHasGlobalPending(pendingRes.data.pending || false);
       </div>
 
       {/* Contact & Support */}
-      <div style={{
-        background: '#ffffff',
-        borderRadius: '20px',
-        padding: '24px',
-        marginTop: '24px',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
-        border: '1px solid #eef2f6'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-          <span style={{ fontSize: '28px' }}>📞</span>
-          <h2 style={{ margin: 0, fontSize: '18px', color: '#1e3c72', fontWeight: '600' }}>Contact & Support</h2>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ fontSize: '18px' }}>📱</span>
-            <span style={{ color: '#4b5563', fontSize: '14px' }}>Phone: 0936592186 (Adane F)</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ fontSize: '18px' }}>📧</span>
-            <span style={{ color: '#4b5563', fontSize: '14px' }}>adaneferede6@gmail.com</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ fontSize: '18px' }}>⏰</span>
-            <span style={{ color: '#4b5563', fontSize: '14px' }}>Mon - Fri, 10:00 - 12:30 local time and Sat - Sun, 2:00 - 12:00 local time</span>
-          </div>
-        </div>
-      </div>
+<div style={{
+  background: '#ffffff',
+  borderRadius: '20px',
+  padding: '24px',
+  marginTop: '24px',
+  boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
+  border: '1px solid #eef2f6'
+}}>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+    <span style={{ fontSize: '28px' }}>📞</span>
+    <h2 style={{ margin: 0, fontSize: '18px', color: '#1e3c72', fontWeight: '600' }}>Contact & Support</h2>
+  </div>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+    {/* Phone */}
+    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+      <span style={{ fontSize: '18px' }}>📱</span>
+      <span style={{ color: '#4b5563', fontSize: '14px' }}>Phone: 0936592186 (Adane F)</span>
+    </div>
+
+    {/* Telegram Group (replaces old email line) */}
+    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+      <span style={{ fontSize: '18px' }}>✈️</span>
+      <a
+        href="https://t.me/SMART_exam_center"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          color: '#2a5298',
+          fontSize: '14px',
+          fontWeight: '500',
+          textDecoration: 'none',
+          background: '#e8f0fe',
+          padding: '6px 14px',
+          borderRadius: '20px',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '4px'
+        }}
+      >
+        Join our Telegram Group <span style={{ fontSize: '12px' }}>↗</span>
+      </a>
+    </div>
+
+    {/* Working Hours */}
+    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+      <span style={{ fontSize: '18px' }}>⏰</span>
+      <span style={{ color: '#4b5563', fontSize: '14px' }}>
+        Mon - Fri, 10:00 - 12:30 local time and Sat - Sun, 2:00 - 12:00 local time
+      </span>
+    </div>
+  </div>
+</div>
 
       {/* Payment Modal - UPDATED */}
       {showPayment && (
