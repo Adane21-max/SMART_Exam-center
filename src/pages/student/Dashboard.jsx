@@ -669,56 +669,68 @@ setHasGlobalPending(pendingRes.data.pending || false);
 
       {/* Payment Modal - UPDATED */}
       {showPayment && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-          background: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center',
-          zIndex: 1000
+  <div style={{
+    position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+    background: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center',
+    zIndex: 1000
+  }}>
+    <div style={{ background: '#fff', padding: '30px', borderRadius: '24px', maxWidth: '480px', width: '90%' }}>
+      <h3 style={{ margin: '0 0 16px', color: '#1e3c72' }}>⏳ Pending Approval</h3>
+      <p style={{ margin: '0 0 16px', color: '#4b5563' }}>
+        Your account is not yet approved. To access full quizzes, please pay 1000 Birr using one of the methods below.
+      </p>
+
+      {/* Telebirr */}
+      <p style={{ background: '#f3f4f6', padding: '12px', borderRadius: '12px', fontWeight: '600', textAlign: 'center' }}>
+        Telebirr: 0936592186 (Adane F)
+      </p>
+
+      {/* Bank Transfer */}
+      <p style={{ background: '#f3f4f6', padding: '12px', borderRadius: '12px', fontWeight: '600', textAlign: 'center', marginTop: '12px' }}>
+        Bank: Commercial Bank of Ethiopia<br/>
+        Account Number: 1000139949963<br/>
+        Account Holder: Adane Ferede
+      </p>
+
+      <p style={{ margin: '16px 0 8px', fontSize: '14px', color: '#6b7280' }}>
+        After payment, enter your full name (as it appears on Telebirr or bank account) and the transaction reference (from SMS, receipt, or deposit slip) below.
+      </p>
+
+      <form onSubmit={handlePaymentSubmit}>
+        <input
+          type="text"
+          placeholder="Your Full Name"
+          value={payerName}
+          onChange={(e) => setPayerName(e.target.value)}
+          required
+          style={{ marginBottom: '12px', width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db' }}
+        />
+        <input
+          type="text"
+          placeholder="Transaction Reference / ID"
+          value={transactionRef}
+          onChange={(e) => setTransactionRef(e.target.value)}
+          required
+          style={{ marginBottom: '16px', width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db' }}
+        />
+        <button type="submit" style={{
+          width: '100%', padding: '12px', background: '#2a5298', color: '#fff',
+          border: 'none', borderRadius: '12px', fontWeight: '600', cursor: 'pointer'
         }}>
-          <div style={{ background: '#fff', padding: '30px', borderRadius: '24px', maxWidth: '480px', width: '90%' }}>
-            <h3 style={{ margin: '0 0 16px', color: '#1e3c72' }}>⏳ Pending Approval</h3>
-            <p style={{ margin: '0 0 16px', color: '#4b5563' }}>
-              Your account is not yet approved. To access full quizzes, please pay 1000 Birr via Telebirr:
-            </p>
-            <p style={{ background: '#f3f4f6', padding: '12px', borderRadius: '12px', fontWeight: '600', textAlign: 'center' }}>
-              Telebirr: 0936592186 (Adane F)
-            </p>
-            <p style={{ margin: '16px 0 8px', fontSize: '14px', color: '#6b7280' }}>
-              After payment, enter your full name as on Telebirr and Telebirr transaction reference below.
-            </p>
-            <form onSubmit={handlePaymentSubmit}>
-              <input
-                type="text"
-                placeholder="Your Full Name (as on Telebirr)"
-                value={payerName}
-                onChange={(e) => setPayerName(e.target.value)}
-                required
-                style={{ marginBottom: '12px', width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db' }}
-              />
-              <input
-                type="text"
-                placeholder="Transaction number / ID   Eg: DCP98AMS1Z"
-                value={transactionRef}
-                onChange={(e) => setTransactionRef(e.target.value)}
-                required
-                style={{ marginBottom: '16px', width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db' }}
-              />
-              <button type="submit" style={{
-                width: '100%', padding: '12px', background: '#2a5298', color: '#fff',
-                border: 'none', borderRadius: '12px', fontWeight: '600', cursor: 'pointer'
-              }}>
-                Submit Payment Info
-              </button>
-            </form>
-            {uploadMsg && <p style={{ marginTop: '12px', color: uploadMsg.includes('failed') ? '#dc2626' : '#059669' }}>{uploadMsg}</p>}
-            <button onClick={() => setShowPayment(false)} style={{
-              marginTop: '16px', background: 'transparent', border: '1px solid #d1d5db',
-              padding: '10px', width: '100%', borderRadius: '12px', cursor: 'pointer', color: '#6b7280'
-            }}>
-              Close
-            </button>
-          </div>
-        </div>
-      )}
+          Submit Payment Info
+        </button>
+      </form>
+
+      {uploadMsg && <p style={{ marginTop: '12px', color: uploadMsg.includes('failed') ? '#dc2626' : '#059669' }}>{uploadMsg}</p>}
+      <button onClick={() => setShowPayment(false)} style={{
+        marginTop: '16px', background: 'transparent', border: '1px solid #d1d5db',
+        padding: '10px', width: '100%', borderRadius: '12px', cursor: 'pointer', color: '#6b7280'
+      }}>
+        Close
+      </button>
+    </div>
+  </div>
+)}
 
       {/* Review Modal */}
       {reviewAttempt && (
