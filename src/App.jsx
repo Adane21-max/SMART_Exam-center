@@ -15,7 +15,7 @@ import FreeTrial from './pages/admin/FreeTrial';
 import Announcements from './pages/admin/Announcements';
 import QuestionTypes from './pages/admin/QuestionTypes';
 import Payments from './pages/admin/Payments';
-import UpgradeRequests from './pages/admin/UpgradeRequests';   // <-- NEW
+import UpgradeRequests from './pages/admin/UpgradeRequests';
 
 // Student pages
 import StudentDashboard from './pages/student/Dashboard';
@@ -29,9 +29,11 @@ const App = () => {
 
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      {/* ✅ Default page is now Login */}
+      <Route path="/" element={<Login />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/home" element={<Home />} />   {/* optional: keep Home accessible */}
 
       {/* Admin Routes with Sidebar */}
       <Route path="/admin" element={
@@ -114,7 +116,7 @@ const App = () => {
           </div>
         </PrivateRoute>
       } />
-      <Route path="/admin/upgrade-requests" element={   // <-- NEW ROUTE
+      <Route path="/admin/upgrade-requests" element={
         <PrivateRoute adminOnly>
           <div style={{ display: 'flex' }}>
             <Sidebar />
