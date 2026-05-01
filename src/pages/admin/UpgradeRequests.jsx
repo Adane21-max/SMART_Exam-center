@@ -78,6 +78,8 @@ const UpgradeRequests = () => {
               <th>From Level</th>
               <th>To Level</th>
               <th>Avg Score</th>
+              <th>Payer Name</th>          {/* 👈 new */}
+              <th>Transaction Ref</th>    {/* 👈 new */}
               <th>Status</th>
               <th>Date</th>
               <th>Actions</th>
@@ -92,6 +94,8 @@ const UpgradeRequests = () => {
                 <td>{req.from_level}</td>
                 <td>{req.to_level}</td>
                 <td>{req.average_score}%</td>
+                <td>{req.payer_name || '—'}</td>          {/* 👈 new */}
+                <td>{req.transaction_ref || '—'}</td>    {/* 👈 new */}
                 <td>{getStatusBadge(req.status)}</td>
                 <td>{new Date(req.created_at).toLocaleDateString()}</td>
                 <td>
