@@ -687,9 +687,7 @@ setHasGlobalPending(pendingRes.data.pending || false);
 
       {/* Bank Transfer */}
       <p style={{ background: '#f3f4f6', padding: '12px', borderRadius: '12px', fontWeight: '600', textAlign: 'center', marginTop: '12px' }}>
-        Bank: Commercial Bank of Ethiopia<br/>
-        Account Number: 1000139949963<br/>
-        Account Holder: Adane Ferede
+        CBE: 100013994996 (Adane Ferede)
       </p>
 
       <p style={{ margin: '16px 0 8px', fontSize: '14px', color: '#6b7280' }}>
