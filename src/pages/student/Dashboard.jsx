@@ -533,7 +533,7 @@ setHasGlobalPending(pendingRes.data.pending || false);
                   cursor: 'pointer'
                 }}
               >
-                Unlock Quizzes
+                Unlock Quizzes: ሞዴል ፈተናዎችን ለመክፈት
               </button>
             </div>
           )}
