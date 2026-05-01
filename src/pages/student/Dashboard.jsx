@@ -316,15 +316,17 @@ setHasGlobalPending(pendingRes.data.pending || false);
                   </p>
                   <button
                     onClick={async () => {
-                      try {
-                        const res = await api.post('/upgrades/request', {});
-                        alert(res.data.message);
-                        const refreshed = await api.get('/upgrades/pending');
-                        setHasGlobalPending(refreshed.data.pending);
-                      } catch (err) {
-                        alert(err.response?.data?.message || 'Failed to request upgrade');
-                      }
-                    }}
+  try {
+    const res = await api.post('/upgrades/request', {});
+    const msg = res.data.msg || res.data.message || 'Request submitted successfully!';
+    alert(msg);
+    const refreshed = await api.get('/upgrades/pending');
+    setHasGlobalPending(refreshed.data.pending);
+  } catch (err) {
+    const msg = err.response?.data?.msg || err.response?.data?.message || 'Failed to request upgrade';
+    alert(msg);
+  }
+}}
                     style={{ padding: '10px 24px', background: '#f59e0b', color: '#fff', border: 'none', borderRadius: '30px', fontWeight: '600', cursor: 'pointer', fontSize: '15px' }}
                   >
                     🚀 Request Level {globalLevel + 1} Upgrade
