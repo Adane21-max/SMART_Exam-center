@@ -20,6 +20,10 @@ const StudentDashboard = () => {
   const [leaderboard, setLeaderboard] = useState([]);
   const [globalLevel, setGlobalLevel] = useState(1);               // student's current global level
   const [hasGlobalPending, setHasGlobalPending] = useState(false); // whether a global upgrade request is pending
+  const [showUpgradePayment, setShowUpgradePayment] = useState(false);
+  const [upgradePayerName, setUpgradePayerName] = useState('');
+ const [upgradeTransactionRef, setUpgradeTransactionRef] = useState('');
+ const [upgradeUploadMsg, setUpgradeUploadMsg] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -315,22 +319,11 @@ setHasGlobalPending(pendingRes.data.pending || false);
                     🎉 You've completed all Level {globalLevel} quizzes with an average of {overallAvg.toFixed(1)}%!
                   </p>
                   <button
-                    onClick={async () => {
-  try {
-    const res = await api.post('/upgrades/request', {});
-    const msg = res.data.msg || res.data.message || 'Request submitted successfully!';
-    alert(msg);
-    const refreshed = await api.get('/upgrades/pending');
-    setHasGlobalPending(refreshed.data.pending);
-  } catch (err) {
-    const msg = err.response?.data?.msg || err.response?.data?.message || 'Failed to request upgrade';
-    alert(msg);
-  }
-}}
-                    style={{ padding: '10px 24px', background: '#f59e0b', color: '#fff', border: 'none', borderRadius: '30px', fontWeight: '600', cursor: 'pointer', fontSize: '15px' }}
-                  >
-                    🚀 Request Level {globalLevel + 1} Upgrade
-                  </button>
+  onClick={() => setShowUpgradePayment(true)}
+  style={{ padding: '10px 24px', background: '#f59e0b', color: '#fff', border: 'none', borderRadius: '30px', fontWeight: '600', cursor: 'pointer', fontSize: '15px' }}
+>
+  🚀 Request Level {globalLevel + 1} Upgrade
+</button>
                 </div>
               );
             }
@@ -793,6 +786,88 @@ setHasGlobalPending(pendingRes.data.pending || false);
           </div>
         </div>
       )}
+      {/* Upgrade Payment Modal */}
+{showUpgradePayment && (
+  <div style={{
+    position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+    background: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center',
+    zIndex: 1000
+  }}>
+    <div style={{ background: '#fff', padding: '30px', borderRadius: '24px', maxWidth: '480px', width: '90%' }}>
+      <h3 style={{ margin: '0 0 16px', color: '#1e3c72' }}>🚀 Level Upgrade Payment</h3>
+      <p style={{ margin: '0 0 16px', color: '#4b5563' }}>
+        To unlock Level {globalLevel + 1}, please pay 1000 Birr using one of the methods below.
+      </p>
+
+      <p style={{ background: '#f3f4f6', padding: '12px', borderRadius: '12px', fontWeight: '600', textAlign: 'center' }}>
+        Telebirr: 0936592186 (Adane F)
+      </p>
+      <p style={{ background: '#f3f4f6', padding: '12px', borderRadius: '12px', fontWeight: '600', textAlign: 'center', marginTop: '12px' }}>
+        Bank: Commercial Bank of Ethiopia<br/>
+        Account Number: 1000139949963<br/>
+        Account Holder: Adane Ferede
+      </p>
+
+      <p style={{ margin: '16px 0 8px', fontSize: '14px', color: '#6b7280' }}>
+        After payment, enter your full name and transaction reference (from SMS, receipt, or deposit slip).
+      </p>
+
+      <form onSubmit={async (e) => {
+        e.preventDefault();
+        if (!upgradePayerName.trim() || !upgradeTransactionRef.trim()) {
+          setUpgradeUploadMsg('Please fill in both fields.');
+          return;
+        }
+        try {
+          await api.post('/upgrades/request', {
+            payer_name: upgradePayerName.trim(),
+            transaction_ref: upgradeTransactionRef.trim()
+          });
+          alert('Upgrade request submitted! Awaiting admin approval.');
+          setUpgradePayerName('');
+          setUpgradeTransactionRef('');
+          setShowUpgradePayment(false);
+          const refreshed = await api.get('/upgrades/pending');
+          setHasGlobalPending(refreshed.data.pending);
+        } catch (err) {
+          const msg = err.response?.data?.msg || err.response?.data?.message || 'Failed to request upgrade';
+          alert(msg);
+        }
+      }}>
+        <input
+          type="text"
+          placeholder="Your Full Name"
+          value={upgradePayerName}
+          onChange={(e) => setUpgradePayerName(e.target.value)}
+          required
+          style={{ marginBottom: '12px', width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db' }}
+        />
+        <input
+          type="text"
+          placeholder="Transaction Reference / ID"
+          value={upgradeTransactionRef}
+          onChange={(e) => setUpgradeTransactionRef(e.target.value)}
+          required
+          style={{ marginBottom: '16px', width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db' }}
+        />
+        <button type="submit" style={{
+          width: '100%', padding: '12px', background: '#2a5298', color: '#fff',
+          border: 'none', borderRadius: '12px', fontWeight: '600', cursor: 'pointer'
+        }}>
+          Submit Payment & Request Upgrade
+        </button>
+      </form>
+
+      {upgradeUploadMsg && <p style={{ marginTop: '12px', color: '#dc2626' }}>{upgradeUploadMsg}</p>}
+      <button onClick={() => setShowUpgradePayment(false)} style={{
+        marginTop: '16px', background: 'transparent', border: '1px solid #d1d5db',
+        padding: '10px', width: '100%', borderRadius: '12px', cursor: 'pointer', color: '#6b7280'
+      }}>
+        Close
+      </button>
+    </div>
+  </div>
+)}
     </div>
   );
 };
