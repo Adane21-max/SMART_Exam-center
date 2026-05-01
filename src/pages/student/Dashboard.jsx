@@ -677,7 +677,7 @@ setHasGlobalPending(pendingRes.data.pending || false);
     <div style={{ background: '#fff', padding: '30px', borderRadius: '24px', maxWidth: '480px', width: '90%' }}>
       <h3 style={{ margin: '0 0 16px', color: '#1e3c72' }}>⏳ Pending Approval</h3>
       <p style={{ margin: '0 0 16px', color: '#4b5563' }}>
-        Your account is not yet approved. To access full quizzes, please pay 1000 Birr using one of the methods below.
+        Your account is not yet approved. To access full quizzes, please pay 1000 Birr using one of the methods below. ሙሉ አባልነትን ለማግኘት ከታች በሚታዩት አማርጮች 1000 ብር ብቻ ይክፈሉና ስምና የክፍያ ቁጥር ከታች በሚታዩት ባዶ ቦታዎች ላይ ያስገቡ። 
       </p>
 
       {/* Telebirr */}
