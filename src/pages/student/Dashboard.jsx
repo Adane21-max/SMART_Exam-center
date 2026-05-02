@@ -476,11 +476,21 @@ setHasGlobalPending(pendingRes.data.pending || false);
         <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
           Score: {existingAttempt.score}/{existingAttempt.total_questions} ({Math.round((existingAttempt.score / existingAttempt.total_questions) * 100)}%)
         </p>
-        {endDate && (
-          <p style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
-            ⏰ Closes: {new Date(endDate).toLocaleString()}
-          </p>
-        )}
+        {endDate && (() => {
+  const closingIn = getTimeRemaining(endDate);
+  if (closingIn) {
+    return (
+      <p style={{ fontSize: '12px', color: '#dc2626', marginTop: '4px' }}>
+        ⏰ Closes in: {closingIn}
+      </p>
+    );
+  }
+  return (
+    <p style={{ fontSize: '12px', color: '#dc2626', marginTop: '4px' }}>
+      ⏰ Expiring…
+    </p>
+  );
+})()}
         <button
           onClick={(e) => { e.stopPropagation(); handleReview(existingAttempt.id); }}
           style={{
@@ -525,10 +535,21 @@ setHasGlobalPending(pendingRes.data.pending || false);
       >
         <div style={{ fontSize: '32px', marginBottom: '12px' }}>📋</div>
         <h4 style={{ margin: '0 0 8px', fontSize: '18px', color: '#1e3c72' }}>{type.name}</h4>
-        {endDate && (
-          <p style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px' }}>
-            ⏰ Closes: {new Date(endDate).toLocaleString()}
-          </p>
+        {endDate && (() => {
+  const closingIn = getTimeRemaining(endDate);
+  if (closingIn) {
+    return (
+      <p style={{ fontSize: '12px', color: '#dc2626', marginTop: '4px' }}>
+        ⏰ Closes in: {closingIn}
+      </p>
+    );
+  }
+  return (
+    <p style={{ fontSize: '12px', color: '#dc2626', marginTop: '4px' }}>
+      ⏰ Expiring…
+    </p>
+  );
+})()}
         )}
         <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
           {type.total_time ? `⏱️ ${Math.floor(type.total_time / 60)} min` : '🎯 No time limit'}
