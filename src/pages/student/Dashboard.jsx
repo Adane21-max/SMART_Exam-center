@@ -650,26 +650,27 @@ setHasGlobalPending(pendingRes.data.pending || false);
             ) : (
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
                 <thead>
-                  <tr style={{ borderBottom: '1px solid #e5e7eb', color: '#6b7280' }}>
-                    <th style={{ textAlign: 'left', paddingBottom: '8px' }}>#</th>
-                    <th style={{ textAlign: 'left', paddingBottom: '8px' }}>Student</th>
-                    <th style={{ textAlign: 'center', paddingBottom: '8px' }}>Subj</th>
-                    <th style={{ textAlign: 'center', paddingBottom: '8px' }}>T</th>
-                    <th style={{ textAlign: 'center', paddingBottom: '8px' }}>Avg</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {leaderboard.map((entry, idx) => (
-                    <tr key={idx} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                      <td style={{ padding: '8px 0', fontWeight: '500' }}>{idx + 1}</td>
-                      <td style={{ padding: '8px 0' }}>{entry.username}</td>
-                      <td style={{ textAlign: 'center', padding: '8px 0' }}>{entry.subject_count}</td>
-                      <td style={{ textAlign: 'center', padding: '8px 0' }}>{entry.T}</td>
-                      <td style={{ textAlign: 'center', padding: '8px 0', fontWeight: '600', color: '#2a5298' }}>{entry.Avg}%</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+  <tr style={{ borderBottom: '1px solid #e5e7eb', color: '#6b7280' }}>
+    <th style={{ textAlign: 'left', paddingBottom: '8px' }}>#</th>
+    <th style={{ textAlign: 'left', paddingBottom: '8px' }}>Student</th>
+    <th style={{ textAlign: 'center', paddingBottom: '8px' }}>Level</th>   {/* 👈 new */}
+    <th style={{ textAlign: 'center', paddingBottom: '8px' }}>Subj</th>
+    <th style={{ textAlign: 'center', paddingBottom: '8px' }}>T</th>
+    <th style={{ textAlign: 'center', paddingBottom: '8px' }}>Avg</th>
+  </tr>
+</thead>
+<tbody>
+  {leaderboard.map((entry, idx) => (
+    <tr key={idx} style={{ borderBottom: '1px solid #f3f4f6' }}>
+      <td style={{ padding: '8px 0', fontWeight: '500' }}>{idx + 1}</td>
+      <td style={{ padding: '8px 0' }}>{entry.username}</td>
+      <td style={{ textAlign: 'center', padding: '8px 0' }}>{entry.current_level}</td>   {/* 👈 new */}
+      <td style={{ textAlign: 'center', padding: '8px 0' }}>{entry.subject_count}</td>
+      <td style={{ textAlign: 'center', padding: '8px 0' }}>{entry.T}</td>
+      <td style={{ textAlign: 'center', padding: '8px 0', fontWeight: '600', color: '#2a5298' }}>{entry.Avg}%</td>
+    </tr>
+  ))}
+</tbody>
             )}
           </div>
 
