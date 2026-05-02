@@ -9,8 +9,8 @@ const StudentDashboard = () => {
   const [announcements, setAnnouncements] = useState([]);
   const [quizTypes, setQuizTypes] = useState([]);
   const [subjects, setSubjects] = useState([]);
-  const [showPayment, setShowPayment] = useState(false);
-  const [payerName, setPayerName] = useState('');
+  const [showPayment, setShowPayment] = (false);
+  const [payerName, setPayerName] = ('');
   const [transactionRef, setTransactionRef] = useState('');
   const [uploadMsg, setUploadMsg] = useState('');
   const [loading, setLoading] = useState(true);
@@ -25,6 +25,14 @@ const StudentDashboard = () => {
  const [upgradeTransactionRef, setUpgradeTransactionRef] = useState('');
  const [upgradeUploadMsg, setUpgradeUploadMsg] = useState('');
 
+  // ✅ ADD THIS BLOCK
+  const [now, setNow] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+  // ✅ END OF ADDED BLOCK
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -54,6 +62,20 @@ setHasGlobalPending(pendingRes.data.pending || false);
     if (user?.grade) fetchData();
   }, [user, refreshKey]);
 
+    // ✅ ADD THIS HELPER FUNCTION
+  const getTimeRemaining = (targetDate) => {
+    const diff = new Date(targetDate) - now;
+    if (diff <= 0) return null;
+    const days = Math.floor(diff / 86400000);
+    const hours = Math.floor((diff % 86400000) / 3600000);
+    const minutes = Math.floor((diff % 3600000) / 60000);
+    const seconds = Math.floor((diff % 60000) / 1000);
+    if (days > 0) return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    if (hours > 0) return `${hours}h ${minutes}m ${seconds}s`;
+    if (minutes > 0) return `${minutes}m ${seconds}s`;
+    return `${seconds}s`;
+  };
+  // ✅ END OF HELPER
   const handleTakeQuizClick = () => {
     if (user?.status !== 'approved') {
       setShowPayment(true);
@@ -399,81 +421,138 @@ setHasGlobalPending(pendingRes.data.pending || false);
                       ) : (
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '16px' }}>
                           {subjectQuizzes.map(type => {
-                            const existingAttempt = attempts.find(a => String(a.type_id) === String(type.id));
-                            if (existingAttempt) {
-                              return (
-                                <div
-                                  key={type.id}
-                                  style={{
-                                    background: 'linear-gradient(145deg, #fff 0%, #f8faff 100%)',
-                                    border: '1px solid #cbd5e1',
-                                    borderRadius: '16px',
-                                    padding: '20px',
-                                    cursor: 'pointer',
-                                    transition: 'all 0.2s'
-                                  }}
-                                  onMouseEnter={e => {
-                                    e.currentTarget.style.transform = 'translateY(-4px)';
-                                    e.currentTarget.style.boxShadow = '0 12px 20px rgba(42,82,152,0.1)';
-                                  }}
-                                  onMouseLeave={e => {
-                                    e.currentTarget.style.transform = 'translateY(0)';
-                                    e.currentTarget.style.boxShadow = 'none';
-                                  }}
-                                >
-                                  <div style={{ fontSize: '32px', marginBottom: '12px' }}>✅</div>
-                                  <h4 style={{ margin: '0 0 8px', fontSize: '18px', color: '#1e3c72' }}>{type.name}</h4>
-                                  <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
-                                    Score: {existingAttempt.score}/{existingAttempt.total_questions} ({Math.round((existingAttempt.score / existingAttempt.total_questions) * 100)}%)
-                                  </p>
-                                  <button
-                                    onClick={(e) => { e.stopPropagation(); handleReview(existingAttempt.id); }}
-                                    style={{
-                                      marginTop: '12px',
-                                      padding: '8px 16px',
-                                      background: '#e8f0fe',
-                                      border: 'none',
-                                      borderRadius: '20px',
-                                      color: '#2a5298',
-                                      fontWeight: '500',
-                                      cursor: 'pointer',
-                                      width: '100%'
-                                    }}
-                                  >
-                                    📋 Review
-                                  </button>
-                                </div>
-                              );
-                            }
-                            return (
-                              <div
-                                key={type.id}
-                                onClick={() => navigate(`/take-quiz/${type.id}`)}
-                                style={{
-                                  background: 'linear-gradient(145deg, #fff 0%, #f8faff 100%)',
-                                  border: '1px solid #e0e7ff',
-                                  borderRadius: '16px',
-                                  padding: '20px',
-                                  cursor: 'pointer',
-                                  transition: 'all 0.2s'
-                                }}
-                                onMouseEnter={e => {
-                                  e.currentTarget.style.transform = 'translateY(-4px)';
-                                  e.currentTarget.style.boxShadow = '0 12px 20px rgba(42,82,152,0.1)';
-                                }}
-                                onMouseLeave={e => {
-                                  e.currentTarget.style.transform = 'translateY(0)';
-                                  e.currentTarget.style.boxShadow = 'none';
-                                }}
-                              >
-                                <div style={{ fontSize: '32px', marginBottom: '12px' }}>📋</div>
-                                <h4 style={{ margin: '0 0 8px', fontSize: '18px', color: '#1e3c72' }}>{type.name}</h4>
-                                <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
-                                  {type.total_time ? `⏱️ ${Math.floor(type.total_time / 60)} min` : '🎯 No time limit'}
-                                </p>
-                              </div>
-                            );
-                          })}
+  const existingAttempt = attempts.find(a => String(a.type_id) === String(type.id));
+  const startDate = type.start_date;
+  const endDate = type.end_date;
+  const timeUntilStart = startDate ? getTimeRemaining(startDate) : null;
+  const isUpcoming = timeUntilStart !== null;
+  const isActive = !isUpcoming && (!endDate || new Date(endDate) > now);
+
+  // ⏳ UPCOMING QUIZ (not yet started)
+  if (isUpcoming) {
+    return (
+      <div key={type.id} style={{
+        background: 'linear-gradient(145deg, #fff 0%, #f8faff 100%)',
+        border: '1px solid #cbd5e1',
+        borderRadius: '16px',
+        padding: '20px',
+        opacity: 0.8,
+        transition: 'all 0.2s'
+      }}>
+        <div style={{ fontSize: '32px', marginBottom: '12px' }}>⏳</div>
+        <h4 style={{ margin: '0 0 8px', fontSize: '18px', color: '#1e3c72' }}>{type.name}</h4>
+        <p style={{ fontSize: '14px', color: '#f59e0b' }}>
+          Starts in: {timeUntilStart}
+        </p>
+        <p style={{ fontSize: '12px', color: '#6b7280' }}>
+          Scheduled: {new Date(startDate).toLocaleString()}
+        </p>
+      </div>
+    );
+  }
+
+  // ✅ ACTIVE QUIZ – already attempted
+  if (existingAttempt && isActive) {
+    return (
+      <div key={type.id}
+        style={{
+          background: 'linear-gradient(145deg, #fff 0%, #f8faff 100%)',
+          border: '1px solid #cbd5e1',
+          borderRadius: '16px',
+          padding: '20px',
+          cursor: 'pointer',
+          transition: 'all 0.2s'
+        }}
+        onMouseEnter={e => {
+          e.currentTarget.style.transform = 'translateY(-4px)';
+          e.currentTarget.style.boxShadow = '0 12px 20px rgba(42,82,152,0.1)';
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow = 'none';
+        }}
+      >
+        <div style={{ fontSize: '32px', marginBottom: '12px' }}>✅</div>
+        <h4 style={{ margin: '0 0 8px', fontSize: '18px', color: '#1e3c72' }}>{type.name}</h4>
+        <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
+          Score: {existingAttempt.score}/{existingAttempt.total_questions} ({Math.round((existingAttempt.score / existingAttempt.total_questions) * 100)}%)
+        </p>
+        {endDate && (
+          <p style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+            ⏰ Closes: {new Date(endDate).toLocaleString()}
+          </p>
+        )}
+        <button
+          onClick={(e) => { e.stopPropagation(); handleReview(existingAttempt.id); }}
+          style={{
+            marginTop: '12px',
+            padding: '8px 16px',
+            background: '#e8f0fe',
+            border: 'none',
+            borderRadius: '20px',
+            color: '#2a5298',
+            fontWeight: '500',
+            cursor: 'pointer',
+            width: '100%'
+          }}
+        >
+          📋 Review
+        </button>
+      </div>
+    );
+  }
+
+  // 📋 ACTIVE QUIZ – not attempted yet
+  if (isActive) {
+    return (
+      <div key={type.id}
+        onClick={() => navigate(`/take-quiz/${type.id}`)}
+        style={{
+          background: 'linear-gradient(145deg, #fff 0%, #f8faff 100%)',
+          border: '1px solid #e0e7ff',
+          borderRadius: '16px',
+          padding: '20px',
+          cursor: 'pointer',
+          transition: 'all 0.2s'
+        }}
+        onMouseEnter={e => {
+          e.currentTarget.style.transform = 'translateY(-4px)';
+          e.currentTarget.style.boxShadow = '0 12px 20px rgba(42,82,152,0.1)';
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow = 'none';
+        }}
+      >
+        <div style={{ fontSize: '32px', marginBottom: '12px' }}>📋</div>
+        <h4 style={{ margin: '0 0 8px', fontSize: '18px', color: '#1e3c72' }}>{type.name}</h4>
+        {endDate && (
+          <p style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px' }}>
+            ⏰ Closes: {new Date(endDate).toLocaleString()}
+          </p>
+        )}
+        <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
+          {type.total_time ? `⏱️ ${Math.floor(type.total_time / 60)} min` : '🎯 No time limit'}
+        </p>
+      </div>
+    );
+  }
+
+  // ⏰ EXPIRED (fallback – rarely shown because backend filters them out)
+  return (
+    <div key={type.id} style={{
+      background: '#f1f5f9',
+      border: '1px solid #cbd5e1',
+      borderRadius: '16px',
+      padding: '20px',
+      opacity: 0.6
+    }}>
+      <div style={{ fontSize: '32px', marginBottom: '12px' }}>⏰</div>
+      <h4 style={{ margin: '0 0 8px', fontSize: '18px', color: '#1e3c72' }}>{type.name}</h4>
+      <p style={{ fontSize: '14px', color: '#dc2626' }}>Expired</p>
+    </div>
+  );
+})}
                         </div>
                       )}
                     </div>
