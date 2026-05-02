@@ -9,8 +9,8 @@ const StudentDashboard = () => {
   const [announcements, setAnnouncements] = useState([]);
   const [quizTypes, setQuizTypes] = useState([]);
   const [subjects, setSubjects] = useState([]);
-  const [showPayment, setShowPayment] = (false);
-  const [payerName, setPayerName] = ('');
+ const [showPayment, setShowPayment] = useState(false);
+ const [payerName, setPayerName] = useState('');
   const [transactionRef, setTransactionRef] = useState('');
   const [uploadMsg, setUploadMsg] = useState('');
   const [loading, setLoading] = useState(true);
