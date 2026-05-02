@@ -441,7 +441,7 @@ setHasGlobalPending(pendingRes.data.pending || false);
         <div style={{ fontSize: '32px', marginBottom: '12px' }}>⏳</div>
         <h4 style={{ margin: '0 0 8px', fontSize: '18px', color: '#1e3c72' }}>{type.name}</h4>
         <p style={{ fontSize: '14px', color: '#f59e0b' }}>
-          Starts in: {timeUntilStart}
+          The Quiz Opens After: {timeUntilStart}
         </p>
         <p style={{ fontSize: '12px', color: '#6b7280' }}>
           Scheduled: {new Date(startDate).toLocaleString()}
