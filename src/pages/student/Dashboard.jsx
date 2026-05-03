@@ -326,7 +326,7 @@ const StudentDashboard = () => {
               });
               overallAvg = totalPercent / levelQuizzes.length;
             }
-            if (allAttempted && overallAvg >= 70 && !hasGlobalPending) {
+            if (allAttempted && overallAvg >= 50 && !hasGlobalPending) {
               return (
                 <div style={{ background: '#fef3c7', border: '1px solid #f59e0b', borderRadius: '16px', padding: '20px', marginBottom: '24px', textAlign: 'center' }}>
                   <p style={{ fontSize: '16px', fontWeight: '600', color: '#1e3c72' }}>
@@ -348,11 +348,11 @@ const StudentDashboard = () => {
                 </div>
               );
             }
-            if (allAttempted && overallAvg < 70) {
+            if (allAttempted && overallAvg < 50) {
               return (
                 <div style={{ background: '#fee2e2', border: '1px solid #dc2626', borderRadius: '16px', padding: '20px', marginBottom: '24px' }}>
                   <p style={{ fontWeight: '600', color: '#1e3c72' }}>
-                    Your overall average is {overallAvg.toFixed(1)}%. You need 70% to unlock Level {globalLevel + 1}.
+                    Your overall average is {overallAvg.toFixed(1)}%. You need 50% to unlock Level {globalLevel + 1}.
                   </p>
                   <p style={{ color: '#4b5563' }}>
                     Retake option coming soon.
