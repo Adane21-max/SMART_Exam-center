@@ -441,7 +441,7 @@ setHasGlobalPending(pendingRes.data.pending || false);
         <div style={{ fontSize: '32px', marginBottom: '12px' }}>⏳</div>
         <h4 style={{ margin: '0 0 8px', fontSize: '18px', color: '#1e3c72' }}>{type.name}</h4>
         <p style={{ fontSize: '14px', color: '#f59e0b' }}>
-          Start After: {timeUntilStart}
+          Starts in: {timeUntilStart}
         </p>
         <p style={{ fontSize: '12px', color: '#6b7280' }}>
           Scheduled: {new Date(startDate).toLocaleString()}
@@ -477,20 +477,16 @@ setHasGlobalPending(pendingRes.data.pending || false);
           Score: {existingAttempt.score}/{existingAttempt.total_questions} ({Math.round((existingAttempt.score / existingAttempt.total_questions) * 100)}%)
         </p>
         {endDate && (() => {
-  const closingIn = getTimeRemaining(endDate);
-  if (closingIn) {
-    return (
-      <p style={{ fontSize: '12px', color: '#dc2626', marginTop: '4px' }}>
-        ⏰ Closes in: {closingIn}
-      </p>
-    );
-  }
-  return (
-    <p style={{ fontSize: '12px', color: '#dc2626', marginTop: '4px' }}>
-      ⏰ Expiring…
-    </p>
-  );
-})()}
+          const closingIn = getTimeRemaining(endDate);
+          if (closingIn) {
+            return (
+              <p style={{ fontSize: '12px', color: '#dc2626', marginTop: '4px' }}>
+                ⏰ Closes in: {closingIn}
+              </p>
+            );
+          }
+          return null;
+        })()}
         <button
           onClick={(e) => { e.stopPropagation(); handleReview(existingAttempt.id); }}
           style={{
@@ -536,21 +532,16 @@ setHasGlobalPending(pendingRes.data.pending || false);
         <div style={{ fontSize: '32px', marginBottom: '12px' }}>📋</div>
         <h4 style={{ margin: '0 0 8px', fontSize: '18px', color: '#1e3c72' }}>{type.name}</h4>
         {endDate && (() => {
-  const closingIn = getTimeRemaining(endDate);
-  if (closingIn) {
-    return (
-      <p style={{ fontSize: '12px', color: '#dc2626', marginTop: '4px' }}>
-        ⏰ Closes in: {closingIn}
-      </p>
-    );
-  }
-  return (
-    <p style={{ fontSize: '12px', color: '#dc2626', marginTop: '4px' }}>
-      ⏰ Expiring…
-    </p>
-  );
-})()}
-        )}
+          const closingIn = getTimeRemaining(endDate);
+          if (closingIn) {
+            return (
+              <p style={{ fontSize: '12px', color: '#dc2626', marginBottom: '4px' }}>
+                ⏰ Closes in: {closingIn}
+              </p>
+            );
+          }
+          return null;
+        })()}
         <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
           {type.total_time ? `⏱️ ${Math.floor(type.total_time / 60)} min` : '🎯 No time limit'}
         </p>
