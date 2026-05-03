@@ -9,8 +9,8 @@ const StudentDashboard = () => {
   const [announcements, setAnnouncements] = useState([]);
   const [quizTypes, setQuizTypes] = useState([]);
   const [subjects, setSubjects] = useState([]);
- const [showPayment, setShowPayment] = useState(false);
- const [payerName, setPayerName] = useState('');
+  const [showPayment, setShowPayment] = useState(false);
+  const [payerName, setPayerName] = useState('');
   const [transactionRef, setTransactionRef] = useState('');
   const [uploadMsg, setUploadMsg] = useState('');
   const [loading, setLoading] = useState(true);
@@ -18,40 +18,38 @@ const StudentDashboard = () => {
   const [reviewAttempt, setReviewAttempt] = useState(null);
   const [reviewQuestions, setReviewQuestions] = useState([]);
   const [leaderboard, setLeaderboard] = useState([]);
-  const [globalLevel, setGlobalLevel] = useState(1);               // student's current global level
-  const [hasGlobalPending, setHasGlobalPending] = useState(false); // whether a global upgrade request is pending
+  const [globalLevel, setGlobalLevel] = useState(1);
+  const [hasGlobalPending, setHasGlobalPending] = useState(false);
   const [showUpgradePayment, setShowUpgradePayment] = useState(false);
   const [upgradePayerName, setUpgradePayerName] = useState('');
- const [upgradeTransactionRef, setUpgradeTransactionRef] = useState('');
- const [upgradeUploadMsg, setUpgradeUploadMsg] = useState('');
-  // 👇 ADD THIS BLOCK
+  const [upgradeTransactionRef, setUpgradeTransactionRef] = useState('');
+  const [upgradeUploadMsg, setUpgradeUploadMsg] = useState('');
   const [now, setNow] = useState(new Date());
 
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
-  // 👆 END OF ADDED BLOCK
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [annRes, subjectsRes, typesRes, attemptsRes, leaderRes, levelRes, pendingRes] = await Promise.all([
-  api.get('/announcements'),
-  api.get('/subjects'),
-  api.get(`/question-types/visible?grade=${user?.grade}`),
-  api.get('/attempts'),
-  api.get(`/students/leaderboard?grade=${user?.grade}`),
-  api.get('/students/current-level'),
-  api.get('/upgrades/pending')
-]);
-setAnnouncements(annRes.data);
-setSubjects(subjectsRes.data);
-setQuizTypes(typesRes.data);
-setAttempts(attemptsRes.data);
-setLeaderboard(leaderRes.data);
-setGlobalLevel(levelRes.data.level || 1);
-setHasGlobalPending(pendingRes.data.pending || false);
+          api.get('/announcements'),
+          api.get('/subjects'),
+          api.get(`/question-types/visible?grade=${user?.grade}`),
+          api.get('/attempts'),
+          api.get(`/students/leaderboard?grade=${user?.grade}`),
+          api.get('/students/current-level'),
+          api.get('/upgrades/pending')
+        ]);
+        setAnnouncements(annRes.data);
+        setSubjects(subjectsRes.data);
+        setQuizTypes(typesRes.data);
+        setAttempts(attemptsRes.data);
+        setLeaderboard(leaderRes.data);
+        setGlobalLevel(levelRes.data.level || 1);
+        setHasGlobalPending(pendingRes.data.pending || false);
         console.log('Attempts received:', attemptsRes.data);
       } catch (err) {
         console.error('Failed to fetch dashboard data', err);
@@ -61,7 +59,7 @@ setHasGlobalPending(pendingRes.data.pending || false);
     };
     if (user?.grade) fetchData();
   }, [user, refreshKey]);
-  // 👇 ADD THIS HELPER FUNCTION
+
   const getTimeRemaining = (targetDate) => {
     const diff = new Date(targetDate) - now;
     if (diff <= 0) return null;
@@ -74,7 +72,7 @@ setHasGlobalPending(pendingRes.data.pending || false);
     if (minutes > 0) return `${minutes}m ${seconds}s`;
     return `${seconds}s`;
   };
-  // 👆 END OF HELPER
+
   const handleTakeQuizClick = () => {
     if (user?.status !== 'approved') {
       setShowPayment(true);
@@ -163,15 +161,15 @@ setHasGlobalPending(pendingRes.data.pending || false);
               Grade {user?.grade}
             </span>
             <span style={{
-  background: '#e8f0fe',
-  padding: '4px 12px',
-  borderRadius: '20px',
-  fontSize: '14px',
-  fontWeight: '500',
-  color: '#2a5298'
-}}>
-  Level {globalLevel}
-</span>
+              background: '#e8f0fe',
+              padding: '4px 12px',
+              borderRadius: '20px',
+              fontSize: '14px',
+              fontWeight: '500',
+              color: '#2a5298'
+            }}>
+              Level {globalLevel}
+            </span>
             <span style={{
               background: user?.status === 'approved' ? '#d1fae5' : '#fef3c7',
               padding: '4px 12px',
@@ -310,18 +308,15 @@ setHasGlobalPending(pendingRes.data.pending || false);
             </button>
           </div>
           <p style={{color:'red', fontWeight:'bold'}}>UPGRADE BOX TEST</p>
-                     {/* Global Upgrade Box */}
+          {/* Global Upgrade Box */}
           {user?.status === 'approved' && (() => {
             const levelQuizzes = quizTypes.filter(q => q.level === globalLevel);
             if (levelQuizzes.length === 0) return null;
-
             const attemptMap = {};
             attempts.forEach(a => { attemptMap[a.type_id] = a; });
-
             const allAttempted = levelQuizzes.every(q => attemptMap[q.id]);
             const totalAttempted = levelQuizzes.filter(q => attemptMap[q.id]).length;
             const remaining = levelQuizzes.length - totalAttempted;
-
             let overallAvg = 0;
             if (allAttempted) {
               let totalPercent = 0;
@@ -331,8 +326,6 @@ setHasGlobalPending(pendingRes.data.pending || false);
               });
               overallAvg = totalPercent / levelQuizzes.length;
             }
-
-            // Eligible and no pending request
             if (allAttempted && overallAvg >= 70 && !hasGlobalPending) {
               return (
                 <div style={{ background: '#fef3c7', border: '1px solid #f59e0b', borderRadius: '16px', padding: '20px', marginBottom: '24px', textAlign: 'center' }}>
@@ -340,16 +333,14 @@ setHasGlobalPending(pendingRes.data.pending || false);
                     🎉 You've completed all Level {globalLevel} quizzes with an average of {overallAvg.toFixed(1)}%!
                   </p>
                   <button
-  onClick={() => setShowUpgradePayment(true)}
-  style={{ padding: '10px 24px', background: '#f59e0b', color: '#fff', border: 'none', borderRadius: '30px', fontWeight: '600', cursor: 'pointer', fontSize: '15px' }}
->
-  🚀 Request Level {globalLevel + 1} Upgrade
-</button>
+                    onClick={() => setShowUpgradePayment(true)}
+                    style={{ padding: '10px 24px', background: '#f59e0b', color: '#fff', border: 'none', borderRadius: '30px', fontWeight: '600', cursor: 'pointer', fontSize: '15px' }}
+                  >
+                    🚀 Request Level {globalLevel + 1} Upgrade
+                  </button>
                 </div>
               );
             }
-
-            // Pending request
             if (hasGlobalPending) {
               return (
                 <div style={{ background: '#fef3c7', border: '1px solid #f59e0b', borderRadius: '16px', padding: '20px', marginBottom: '24px', textAlign: 'center' }}>
@@ -357,8 +348,6 @@ setHasGlobalPending(pendingRes.data.pending || false);
                 </div>
               );
             }
-
-            // All attempted but below threshold
             if (allAttempted && overallAvg < 70) {
               return (
                 <div style={{ background: '#fee2e2', border: '1px solid #dc2626', borderRadius: '16px', padding: '20px', marginBottom: '24px' }}>
@@ -371,8 +360,6 @@ setHasGlobalPending(pendingRes.data.pending || false);
                 </div>
               );
             }
-
-            // Not all quizzes completed
             return (
               <div style={{ background: '#e8f0fe', border: '1px solid #2a5298', borderRadius: '16px', padding: '20px', marginBottom: '24px' }}>
                 <p>
@@ -414,156 +401,155 @@ setHasGlobalPending(pendingRes.data.pending || false);
                       }}>
                         {subject.name}
                       </h3>
-
                       {subjectQuizzes.length === 0 ? (
                         <p style={{ color: '#6b7280', fontStyle: 'italic', padding: '8px 0' }}>No quizzes yet for this subject.</p>
                       ) : (
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '16px' }}>
                           {subjectQuizzes.map(type => {
-  const existingAttempt = attempts.find(a => String(a.type_id) === String(type.id));
-  const startDate = type.start_date;
-  const endDate = type.end_date;
-  const timeUntilStart = startDate ? getTimeRemaining(startDate) : null;
-  const isUpcoming = timeUntilStart !== null;
-  const isActive = !isUpcoming && (!endDate || new Date(endDate) > now);
+                            const existingAttempt = attempts.find(a => String(a.type_id) === String(type.id));
+                            const startDate = type.start_date;
+                            const endDate = type.end_date;
+                            const timeUntilStart = startDate ? getTimeRemaining(startDate) : null;
+                            const isUpcoming = timeUntilStart !== null;
+                            const isActive = !isUpcoming && (!endDate || new Date(endDate) > now);
 
-  // ⏳ UPCOMING QUIZ
-  if (isUpcoming) {
-    return (
-      <div key={type.id} style={{
-        background: 'linear-gradient(145deg, #fff 0%, #f8faff 100%)',
-        border: '1px solid #cbd5e1',
-        borderRadius: '16px',
-        padding: '20px',
-        opacity: 0.8,
-        transition: 'all 0.2s'
-      }}>
-        <div style={{ fontSize: '32px', marginBottom: '12px' }}>⏳</div>
-        <h4 style={{ margin: '0 0 8px', fontSize: '18px', color: '#1e3c72' }}>{type.name}</h4>
-        <p style={{ fontSize: '14px', color: '#f59e0b' }}>
-          Starts in: {timeUntilStart}
-        </p>
-        <p style={{ fontSize: '12px', color: '#6b7280' }}>
-          Scheduled: {new Date(startDate).toLocaleString()}
-        </p>
-      </div>
-    );
-  }
+                            // ⏳ UPCOMING QUIZ
+                            if (isUpcoming) {
+                              return (
+                                <div key={type.id} style={{
+                                  background: 'linear-gradient(145deg, #fff 0%, #f8faff 100%)',
+                                  border: '1px solid #cbd5e1',
+                                  borderRadius: '16px',
+                                  padding: '20px',
+                                  opacity: 0.8,
+                                  transition: 'all 0.2s'
+                                }}>
+                                  <div style={{ fontSize: '32px', marginBottom: '12px' }}>⏳</div>
+                                  <h4 style={{ margin: '0 0 8px', fontSize: '18px', color: '#1e3c72' }}>{type.name}</h4>
+                                  <p style={{ fontSize: '14px', color: '#f59e0b' }}>
+                                    Starts in: {timeUntilStart}
+                                  </p>
+                                  <p style={{ fontSize: '12px', color: '#6b7280' }}>
+                                    Scheduled: {new Date(startDate).toLocaleString()}
+                                  </p>
+                                </div>
+                              );
+                            }
 
-  // ✅ ACTIVE QUIZ – already attempted
-  if (existingAttempt && isActive) {
-    return (
-      <div key={type.id}
-        style={{
-          background: 'linear-gradient(145deg, #fff 0%, #f8faff 100%)',
-          border: '1px solid #cbd5e1',
-          borderRadius: '16px',
-          padding: '20px',
-          cursor: 'pointer',
-          transition: 'all 0.2s'
-        }}
-        onMouseEnter={e => {
-          e.currentTarget.style.transform = 'translateY(-4px)';
-          e.currentTarget.style.boxShadow = '0 12px 20px rgba(42,82,152,0.1)';
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.transform = 'translateY(0)';
-          e.currentTarget.style.boxShadow = 'none';
-        }}
-      >
-        <div style={{ fontSize: '32px', marginBottom: '12px' }}>✅</div>
-        <h4 style={{ margin: '0 0 8px', fontSize: '18px', color: '#1e3c72' }}>{type.name}</h4>
-        <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
-          Score: {existingAttempt.score}/{existingAttempt.total_questions} ({Math.round((existingAttempt.score / existingAttempt.total_questions) * 100)}%)
-        </p>
-        {endDate && (() => {
-          const closingIn = getTimeRemaining(endDate);
-          if (closingIn) {
-            return (
-              <p style={{ fontSize: '12px', color: '#dc2626', marginTop: '4px' }}>
-                ⏰ Closes in: {closingIn}
-              </p>
-            );
-          }
-          return null;
-        })()}
-        <button
-          onClick={(e) => { e.stopPropagation(); handleReview(existingAttempt.id); }}
-          style={{
-            marginTop: '12px',
-            padding: '8px 16px',
-            background: '#e8f0fe',
-            border: 'none',
-            borderRadius: '20px',
-            color: '#2a5298',
-            fontWeight: '500',
-            cursor: 'pointer',
-            width: '100%'
-          }}
-        >
-          📋 Review
-        </button>
-      </div>
-    );
-  }
+                            // ✅ ACTIVE QUIZ – already attempted
+                            if (existingAttempt && isActive) {
+                              return (
+                                <div key={type.id}
+                                  style={{
+                                    background: 'linear-gradient(145deg, #fff 0%, #f8faff 100%)',
+                                    border: '1px solid #cbd5e1',
+                                    borderRadius: '16px',
+                                    padding: '20px',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s'
+                                  }}
+                                  onMouseEnter={e => {
+                                    e.currentTarget.style.transform = 'translateY(-4px)';
+                                    e.currentTarget.style.boxShadow = '0 12px 20px rgba(42,82,152,0.1)';
+                                  }}
+                                  onMouseLeave={e => {
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                    e.currentTarget.style.boxShadow = 'none';
+                                  }}
+                                >
+                                  <div style={{ fontSize: '32px', marginBottom: '12px' }}>✅</div>
+                                  <h4 style={{ margin: '0 0 8px', fontSize: '18px', color: '#1e3c72' }}>{type.name}</h4>
+                                  <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
+                                    Score: {existingAttempt.score}/{existingAttempt.total_questions} ({Math.round((existingAttempt.score / existingAttempt.total_questions) * 100)}%)
+                                  </p>
+                                  {endDate && (() => {
+                                    const closingIn = getTimeRemaining(endDate);
+                                    if (closingIn) {
+                                      return (
+                                        <p style={{ fontSize: '12px', color: '#dc2626', marginTop: '4px' }}>
+                                          ⏰ Closes in: {closingIn}
+                                        </p>
+                                      );
+                                    }
+                                    return null;
+                                  })()}
+                                  <button
+                                    onClick={(e) => { e.stopPropagation(); handleReview(existingAttempt.id); }}
+                                    style={{
+                                      marginTop: '12px',
+                                      padding: '8px 16px',
+                                      background: '#e8f0fe',
+                                      border: 'none',
+                                      borderRadius: '20px',
+                                      color: '#2a5298',
+                                      fontWeight: '500',
+                                      cursor: 'pointer',
+                                      width: '100%'
+                                    }}
+                                  >
+                                    📋 Review
+                                  </button>
+                                </div>
+                              );
+                            }
 
-  // 📋 ACTIVE QUIZ – not attempted yet
-  if (isActive) {
-    return (
-      <div key={type.id}
-        onClick={() => navigate(`/take-quiz/${type.id}`)}
-        style={{
-          background: 'linear-gradient(145deg, #fff 0%, #f8faff 100%)',
-          border: '1px solid #e0e7ff',
-          borderRadius: '16px',
-          padding: '20px',
-          cursor: 'pointer',
-          transition: 'all 0.2s'
-        }}
-        onMouseEnter={e => {
-          e.currentTarget.style.transform = 'translateY(-4px)';
-          e.currentTarget.style.boxShadow = '0 12px 20px rgba(42,82,152,0.1)';
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.transform = 'translateY(0)';
-          e.currentTarget.style.boxShadow = 'none';
-        }}
-      >
-        <div style={{ fontSize: '32px', marginBottom: '12px' }}>📋</div>
-        <h4 style={{ margin: '0 0 8px', fontSize: '18px', color: '#1e3c72' }}>{type.name}</h4>
-        {endDate && (() => {
-          const closingIn = getTimeRemaining(endDate);
-          if (closingIn) {
-            return (
-              <p style={{ fontSize: '12px', color: '#dc2626', marginBottom: '4px' }}>
-                ⏰ Closes in: {closingIn}
-              </p>
-            );
-          }
-          return null;
-        })()}
-        <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
-          {type.total_time ? `⏱️ ${Math.floor(type.total_time / 60)} min` : '🎯 No time limit'}
-        </p>
-      </div>
-    );
-  }
+                            // 📋 ACTIVE QUIZ – not attempted yet
+                            if (isActive) {
+                              return (
+                                <div key={type.id}
+                                  onClick={() => navigate(`/take-quiz/${type.id}`)}
+                                  style={{
+                                    background: 'linear-gradient(145deg, #fff 0%, #f8faff 100%)',
+                                    border: '1px solid #e0e7ff',
+                                    borderRadius: '16px',
+                                    padding: '20px',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s'
+                                  }}
+                                  onMouseEnter={e => {
+                                    e.currentTarget.style.transform = 'translateY(-4px)';
+                                    e.currentTarget.style.boxShadow = '0 12px 20px rgba(42,82,152,0.1)';
+                                  }}
+                                  onMouseLeave={e => {
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                    e.currentTarget.style.boxShadow = 'none';
+                                  }}
+                                >
+                                  <div style={{ fontSize: '32px', marginBottom: '12px' }}>📋</div>
+                                  <h4 style={{ margin: '0 0 8px', fontSize: '18px', color: '#1e3c72' }}>{type.name}</h4>
+                                  {endDate && (() => {
+                                    const closingIn = getTimeRemaining(endDate);
+                                    if (closingIn) {
+                                      return (
+                                        <p style={{ fontSize: '12px', color: '#dc2626', marginBottom: '4px' }}>
+                                          ⏰ Closes in: {closingIn}
+                                        </p>
+                                      );
+                                    }
+                                    return null;
+                                  })()}
+                                  <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
+                                    {type.total_time ? `⏱️ ${Math.floor(type.total_time / 60)} min` : '🎯 No time limit'}
+                                  </p>
+                                </div>
+                              );
+                            }
 
-  // ⏰ EXPIRED (fallback)
-  return (
-    <div key={type.id} style={{
-      background: '#f1f5f9',
-      border: '1px solid #cbd5e1',
-      borderRadius: '16px',
-      padding: '20px',
-      opacity: 0.6
-    }}>
-      <div style={{ fontSize: '32px', marginBottom: '12px' }}>⏰</div>
-      <h4 style={{ margin: '0 0 8px', fontSize: '18px', color: '#1e3c72' }}>{type.name}</h4>
-      <p style={{ fontSize: '14px', color: '#dc2626' }}>Expired</p>
-    </div>
-  );
-})}
+                            // ⏰ EXPIRED (fallback)
+                            return (
+                              <div key={type.id} style={{
+                                background: '#f1f5f9',
+                                border: '1px solid #cbd5e1',
+                                borderRadius: '16px',
+                                padding: '20px',
+                                opacity: 0.6
+                              }}>
+                                <div style={{ fontSize: '32px', marginBottom: '12px' }}>⏰</div>
+                                <h4 style={{ margin: '0 0 8px', fontSize: '18px', color: '#1e3c72' }}>{type.name}</h4>
+                                <p style={{ fontSize: '14px', color: '#dc2626' }}>Expired</p>
+                              </div>
+                            );
+                          })}
                         </div>
                       )}
                     </div>
@@ -641,27 +627,28 @@ setHasGlobalPending(pendingRes.data.pending || false);
             ) : (
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
                 <thead>
-  <tr style={{ borderBottom: '1px solid #e5e7eb', color: '#6b7280' }}>
-    <th style={{ textAlign: 'left', paddingBottom: '8px' }}>#</th>
-    <th style={{ textAlign: 'left', paddingBottom: '8px' }}>Student</th>
-    <th style={{ textAlign: 'center', paddingBottom: '8px' }}>Subj</th>
-    <th style={{ textAlign: 'center', paddingBottom: '8px' }}>Quizzes</th>   {/* 👈 new */}
-    <th style={{ textAlign: 'center', paddingBottom: '8px' }}>T</th>
-    <th style={{ textAlign: 'center', paddingBottom: '8px' }}>Avg</th>
-  </tr>
-</thead>
-<tbody>
-  {leaderboard.map((entry, idx) => (
-    <tr key={idx} style={{ borderBottom: '1px solid #f3f4f6' }}>
-      <td style={{ padding: '8px 0', fontWeight: '500' }}>{idx + 1}</td>
-      <td style={{ padding: '8px 0' }}>{entry.username}</td>
-      <td style={{ textAlign: 'center', padding: '8px 0' }}>{entry.subject_count}</td>
-      <td style={{ textAlign: 'center', padding: '8px 0' }}>{entry.quiz_count}</td>   {/* 👈 new */}
-      <td style={{ textAlign: 'center', padding: '8px 0' }}>{entry.T}</td>
-      <td style={{ textAlign: 'center', padding: '8px 0', fontWeight: '600', color: '#2a5298' }}>{entry.Avg}%</td>
-    </tr>
-  ))}
-</tbody>
+                  <tr style={{ borderBottom: '1px solid #e5e7eb', color: '#6b7280' }}>
+                    <th style={{ textAlign: 'left', paddingBottom: '8px' }}>#</th>
+                    <th style={{ textAlign: 'left', paddingBottom: '8px' }}>Student</th>
+                    <th style={{ textAlign: 'center', paddingBottom: '8px' }}>Subj</th>
+                    <th style={{ textAlign: 'center', paddingBottom: '8px' }}>Quizzes</th>
+                    <th style={{ textAlign: 'center', paddingBottom: '8px' }}>T</th>
+                    <th style={{ textAlign: 'center', paddingBottom: '8px' }}>Avg</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {leaderboard.map((entry, idx) => (
+                    <tr key={idx} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                      <td style={{ padding: '8px 0', fontWeight: '500' }}>{idx + 1}</td>
+                      <td style={{ padding: '8px 0' }}>{entry.username}</td>
+                      <td style={{ textAlign: 'center', padding: '8px 0' }}>{entry.subject_count}</td>
+                      <td style={{ textAlign: 'center', padding: '8px 0' }}>{entry.quiz_count}</td>
+                      <td style={{ textAlign: 'center', padding: '8px 0' }}>{entry.T}</td>
+                      <td style={{ textAlign: 'center', padding: '8px 0', fontWeight: '600', color: '#2a5298' }}>{entry.Avg}%</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             )}
           </div>
 
@@ -700,121 +687,85 @@ setHasGlobalPending(pendingRes.data.pending || false);
       </div>
 
       {/* Contact & Support */}
-<div style={{
-  background: '#ffffff',
-  borderRadius: '20px',
-  padding: '24px',
-  marginTop: '24px',
-  boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
-  border: '1px solid #eef2f6'
-}}>
-  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-    <span style={{ fontSize: '28px' }}>📞</span>
-    <h2 style={{ margin: 0, fontSize: '18px', color: '#1e3c72', fontWeight: '600' }}>Contact & Support</h2>
-  </div>
-  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-    {/* Phone */}
-    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-      <span style={{ fontSize: '18px' }}>📱</span>
-      <span style={{ color: '#4b5563', fontSize: '14px' }}>Phone: 0936592186 (Adane F)</span>
-    </div>
-
-    {/* Telegram Group (replaces old email line) */}
-    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-      <span style={{ fontSize: '18px' }}>✈️</span>
-      <a
-        href="https://t.me/SMART_exam_center"
-        target="_blank"
-        rel="noopener noreferrer"
-        style={{
-          color: '#2a5298',
-          fontSize: '14px',
-          fontWeight: '500',
-          textDecoration: 'none',
-          background: '#e8f0fe',
-          padding: '6px 14px',
-          borderRadius: '20px',
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '4px'
-        }}
-      >
-        Join our Telegram Group <span style={{ fontSize: '12px' }}>↗</span>
-      </a>
-    </div>
-
-    {/* Working Hours */}
-    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-      <span style={{ fontSize: '18px' }}>⏰</span>
-      <span style={{ color: '#4b5563', fontSize: '14px' }}>
-        Mon - Fri, 10:00 - 12:30 local time and Sat - Sun, 2:00 - 12:00 local time
-      </span>
-    </div>
-  </div>
-</div>
+      <div style={{
+        background: '#ffffff',
+        borderRadius: '20px',
+        padding: '24px',
+        marginTop: '24px',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
+        border: '1px solid #eef2f6'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+          <span style={{ fontSize: '28px' }}>📞</span>
+          <h2 style={{ margin: 0, fontSize: '18px', color: '#1e3c72', fontWeight: '600' }}>Contact & Support</h2>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span style={{ fontSize: '18px' }}>📱</span>
+            <span style={{ color: '#4b5563', fontSize: '14px' }}>Phone: 0936592186 (Adane F)</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span style={{ fontSize: '18px' }}>✈️</span>
+            <a
+              href="https://t.me/SMART_exam_center"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                color: '#2a5298',
+                fontSize: '14px',
+                fontWeight: '500',
+                textDecoration: 'none',
+                background: '#e8f0fe',
+                padding: '6px 14px',
+                borderRadius: '20px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
+            >
+              Join our Telegram Group <span style={{ fontSize: '12px' }}>↗</span>
+            </a>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span style={{ fontSize: '18px' }}>⏰</span>
+            <span style={{ color: '#4b5563', fontSize: '14px' }}>
+              Mon - Fri, 10:00 - 12:30 local time and Sat - Sun, 2:00 - 12:00 local time
+            </span>
+          </div>
+        </div>
+      </div>
 
       {/* Payment Modal - UPDATED */}
       {showPayment && (
-  <div style={{
-    position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-    background: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center',
-    zIndex: 1000
-  }}>
-    <div style={{ background: '#fff', padding: '30px', borderRadius: '24px', maxWidth: '480px', width: '90%' }}>
-      <h3 style={{ margin: '0 0 16px', color: '#1e3c72' }}>⏳ Pending Approval</h3>
-      <p style={{ margin: '0 0 16px', color: '#4b5563' }}>
-        Your account is not yet approved. To access full quizzes, please pay 1000 Birr using one of the methods below. ሙሉ አባልነትን ለማግኘት ከታች በሚታዩት አማርጮች 1000 ብር ብቻ ይክፈሉና ስምና የክፍያ ቁጥር ከታች በሚታዩት ባዶ ቦታዎች ላይ ያስገቡ። 
-      </p>
-
-      {/* Telebirr */}
-      <p style={{ background: '#f3f4f6', padding: '12px', borderRadius: '12px', fontWeight: '600', textAlign: 'center' }}>
-        Telebirr: 0936592186 (Adane F)
-      </p>
-
-      {/* Bank Transfer */}
-      <p style={{ background: '#f3f4f6', padding: '12px', borderRadius: '12px', fontWeight: '600', textAlign: 'center', marginTop: '12px' }}>
-        CBE: 100013994996 (Adane Ferede)
-      </p>
-
-      <p style={{ margin: '16px 0 8px', fontSize: '14px', color: '#6b7280' }}>
-        After payment, enter your full name (as it appears on Telebirr or bank account) and the transaction reference (from SMS, receipt, or deposit slip) below.
-      </p>
-
-      <form onSubmit={handlePaymentSubmit}>
-        <input
-          type="text"
-          placeholder="Your Full Name"
-          value={payerName}
-          onChange={(e) => setPayerName(e.target.value)}
-          required
-          style={{ marginBottom: '12px', width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db' }}
-        />
-        <input
-          type="text"
-          placeholder="Transaction Reference / ID"
-          value={transactionRef}
-          onChange={(e) => setTransactionRef(e.target.value)}
-          required
-          style={{ marginBottom: '16px', width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db' }}
-        />
-        <button type="submit" style={{
-          width: '100%', padding: '12px', background: '#2a5298', color: '#fff',
-          border: 'none', borderRadius: '12px', fontWeight: '600', cursor: 'pointer'
+        <div style={{
+          position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+          background: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center',
+          zIndex: 1000
         }}>
-          Submit Payment Info
-        </button>
-      </form>
-
-      {uploadMsg && <p style={{ marginTop: '12px', color: uploadMsg.includes('failed') ? '#dc2626' : '#059669' }}>{uploadMsg}</p>}
-      <button onClick={() => setShowPayment(false)} style={{
-        marginTop: '16px', background: 'transparent', border: '1px solid #d1d5db',
-        padding: '10px', width: '100%', borderRadius: '12px', cursor: 'pointer', color: '#6b7280'
-      }}>
-        Close
-      </button>
-    </div>
-  </div>
-)}
+          <div style={{ background: '#fff', padding: '30px', borderRadius: '24px', maxWidth: '480px', width: '90%' }}>
+            <h3 style={{ margin: '0 0 16px', color: '#1e3c72' }}>⏳ Pending Approval</h3>
+            <p style={{ margin: '0 0 16px', color: '#4b5563' }}>
+              Your account is not yet approved. To access full quizzes, please pay 1000 Birr using one of the methods below. ሙሉ አባልነትን ለማግኘት ከታች በሚታዩት አማርጮች 1000 ብር ብቻ ይክፈሉና ስምና የክፍያ ቁጥር ከታች በሚታዩት ባዶ ቦታዎች ላይ ያስገቡ። 
+            </p>
+            <p style={{ background: '#f3f4f6', padding: '12px', borderRadius: '12px', fontWeight: '600', textAlign: 'center' }}>
+              Telebirr: 0936592186 (Adane F)
+            </p>
+            <p style={{ background: '#f3f4f6', padding: '12px', borderRadius: '12px', fontWeight: '600', textAlign: 'center', marginTop: '12px' }}>
+              CBE: 100013994996 (Adane Ferede)
+            </p>
+            <p style={{ margin: '16px 0 8px', fontSize: '14px', color: '#6b7280' }}>
+              After payment, enter your full name and transaction reference below.
+            </p>
+            <form onSubmit={handlePaymentSubmit}>
+              <input type="text" placeholder="Your Full Name" value={payerName} onChange={e => setPayerName(e.target.value)} required style={{ marginBottom: '12px', width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db' }} />
+              <input type="text" placeholder="Transaction Reference / ID" value={transactionRef} onChange={e => setTransactionRef(e.target.value)} required style={{ marginBottom: '16px', width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db' }} />
+              <button type="submit" style={{ width: '100%', padding: '12px', background: '#2a5298', color: '#fff', border: 'none', borderRadius: '12px', fontWeight: '600', cursor: 'pointer' }}>Submit Payment Info</button>
+            </form>
+            {uploadMsg && <p style={{ marginTop: '12px', color: uploadMsg.includes('failed') ? '#dc2626' : '#059669' }}>{uploadMsg}</p>}
+            <button onClick={() => setShowPayment(false)} style={{ marginTop: '16px', background: 'transparent', border: '1px solid #d1d5db', padding: '10px', width: '100%', borderRadius: '12px', cursor: 'pointer', color: '#6b7280' }}>Close</button>
+          </div>
+        </div>
+      )}
 
       {/* Review Modal */}
       {reviewAttempt && (
@@ -838,7 +789,6 @@ setHasGlobalPending(pendingRes.data.pending || false);
               const studentAnswer = q.student_answer;
               const isCorrect = studentAnswer === q.correct_answer;
               const isAnswered = studentAnswer !== null && studentAnswer !== undefined;
-
               return (
                 <div key={q.id} style={{ marginBottom: '20px', padding: '15px', background: '#f9fafb', borderRadius: '12px' }}>
                   <p><strong>Q{idx + 1}: {q.question}</strong></p>
@@ -846,22 +796,12 @@ setHasGlobalPending(pendingRes.data.pending || false);
                     {['A', 'B', 'C', 'D'].map(opt => {
                       const isCorrectOption = q.correct_answer === opt;
                       const isStudentChoice = studentAnswer === opt;
-
                       let background = '#f9fafb';
                       if (isStudentChoice && isCorrect) background = '#d1fae5';
                       else if (isStudentChoice && !isCorrect) background = '#fee2e2';
                       else if (isCorrectOption) background = '#d1fae5';
-
                       return (
-                        <div
-                          key={opt}
-                          style={{
-                            padding: '8px',
-                            background,
-                            borderRadius: '6px',
-                            border: isStudentChoice ? '2px solid #2a5298' : '1px solid transparent'
-                          }}
-                        >
+                        <div key={opt} style={{ padding: '8px', background, borderRadius: '6px', border: isStudentChoice ? '2px solid #2a5298' : '1px solid transparent' }}>
                           {opt}: {q[`option${opt}`]}
                           {isCorrectOption && <span style={{ marginLeft: '8px', color: '#059669' }}>✓</span>}
                           {isStudentChoice && !isCorrect && <span style={{ marginLeft: '8px', color: '#dc2626' }}>✗ (Your answer)</span>}
@@ -877,88 +817,59 @@ setHasGlobalPending(pendingRes.data.pending || false);
           </div>
         </div>
       )}
+
       {/* Upgrade Payment Modal */}
-{showUpgradePayment && (
-  <div style={{
-    position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-    background: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center',
-    zIndex: 1000
-  }}>
-    <div style={{ background: '#fff', padding: '30px', borderRadius: '24px', maxWidth: '480px', width: '90%' }}>
-      <h3 style={{ margin: '0 0 16px', color: '#1e3c72' }}>🚀 Level Upgrade Payment</h3>
-      <p style={{ margin: '0 0 16px', color: '#4b5563' }}>
-        To unlock Level {globalLevel + 1}, please pay 1000 Birr using one of the methods below.
-      </p>
-
-      <p style={{ background: '#f3f4f6', padding: '12px', borderRadius: '12px', fontWeight: '600', textAlign: 'center' }}>
-        Telebirr: 0936592186 (Adane F)
-      </p>
-      <p style={{ background: '#f3f4f6', padding: '12px', borderRadius: '12px', fontWeight: '600', textAlign: 'center', marginTop: '12px' }}>
-        Bank: Commercial Bank of Ethiopia<br/>
-        Account Number: 1000139949963<br/>
-        Account Holder: Adane Ferede
-      </p>
-
-      <p style={{ margin: '16px 0 8px', fontSize: '14px', color: '#6b7280' }}>
-        After payment, enter your full name and transaction reference (from SMS, receipt, or deposit slip).
-      </p>
-
-      <form onSubmit={async (e) => {
-        e.preventDefault();
-        if (!upgradePayerName.trim() || !upgradeTransactionRef.trim()) {
-          setUpgradeUploadMsg('Please fill in both fields.');
-          return;
-        }
-        try {
-          await api.post('/upgrades/request', {
-            payer_name: upgradePayerName.trim(),
-            transaction_ref: upgradeTransactionRef.trim()
-          });
-          alert('Upgrade request submitted! Awaiting admin approval.');
-          setUpgradePayerName('');
-          setUpgradeTransactionRef('');
-          setShowUpgradePayment(false);
-          const refreshed = await api.get('/upgrades/pending');
-          setHasGlobalPending(refreshed.data.pending);
-        } catch (err) {
-          const msg = err.response?.data?.msg || err.response?.data?.message || 'Failed to request upgrade';
-          alert(msg);
-        }
-      }}>
-        <input
-          type="text"
-          placeholder="Your Full Name"
-          value={upgradePayerName}
-          onChange={(e) => setUpgradePayerName(e.target.value)}
-          required
-          style={{ marginBottom: '12px', width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db' }}
-        />
-        <input
-          type="text"
-          placeholder="Transaction Reference / ID"
-          value={upgradeTransactionRef}
-          onChange={(e) => setUpgradeTransactionRef(e.target.value)}
-          required
-          style={{ marginBottom: '16px', width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db' }}
-        />
-        <button type="submit" style={{
-          width: '100%', padding: '12px', background: '#2a5298', color: '#fff',
-          border: 'none', borderRadius: '12px', fontWeight: '600', cursor: 'pointer'
+      {showUpgradePayment && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+          background: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center',
+          zIndex: 1000
         }}>
-          Submit Payment & Request Upgrade
-        </button>
-      </form>
-
-      {upgradeUploadMsg && <p style={{ marginTop: '12px', color: '#dc2626' }}>{upgradeUploadMsg}</p>}
-      <button onClick={() => setShowUpgradePayment(false)} style={{
-        marginTop: '16px', background: 'transparent', border: '1px solid #d1d5db',
-        padding: '10px', width: '100%', borderRadius: '12px', cursor: 'pointer', color: '#6b7280'
-      }}>
-        Close
-      </button>
-    </div>
-  </div>
-)}
+          <div style={{ background: '#fff', padding: '30px', borderRadius: '24px', maxWidth: '480px', width: '90%' }}>
+            <h3 style={{ margin: '0 0 16px', color: '#1e3c72' }}>🚀 Level Upgrade Payment</h3>
+            <p style={{ margin: '0 0 16px', color: '#4b5563' }}>
+              To unlock Level {globalLevel + 1}, please pay 1000 Birr using one of the methods below.
+            </p>
+            <p style={{ background: '#f3f4f6', padding: '12px', borderRadius: '12px', fontWeight: '600', textAlign: 'center' }}>
+              Telebirr: 0936592186 (Adane F)
+            </p>
+            <p style={{ background: '#f3f4f6', padding: '12px', borderRadius: '12px', fontWeight: '600', textAlign: 'center', marginTop: '12px' }}>
+              CBE: 1000139949963 (Adane Ferede)
+            </p>
+            <p style={{ margin: '16px 0 8px', fontSize: '14px', color: '#6b7280' }}>
+              After payment, enter your full name and transaction reference below.
+            </p>
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              if (!upgradePayerName.trim() || !upgradeTransactionRef.trim()) {
+                setUpgradeUploadMsg('Please fill in both fields.');
+                return;
+              }
+              try {
+                await api.post('/upgrades/request', {
+                  payer_name: upgradePayerName.trim(),
+                  transaction_ref: upgradeTransactionRef.trim()
+                });
+                alert('Upgrade request submitted! Awaiting admin approval.');
+                setUpgradePayerName('');
+                setUpgradeTransactionRef('');
+                setShowUpgradePayment(false);
+                const refreshed = await api.get('/upgrades/pending');
+                setHasGlobalPending(refreshed.data.pending);
+              } catch (err) {
+                const msg = err.response?.data?.msg || err.response?.data?.message || 'Failed to request upgrade';
+                alert(msg);
+              }
+            }}>
+              <input type="text" placeholder="Your Full Name" value={upgradePayerName} onChange={e => setUpgradePayerName(e.target.value)} required style={{ marginBottom: '12px', width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db' }} />
+              <input type="text" placeholder="Transaction Reference / ID" value={upgradeTransactionRef} onChange={e => setUpgradeTransactionRef(e.target.value)} required style={{ marginBottom: '16px', width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db' }} />
+              <button type="submit" style={{ width: '100%', padding: '12px', background: '#2a5298', color: '#fff', border: 'none', borderRadius: '12px', fontWeight: '600', cursor: 'pointer' }}>Submit Payment & Request Upgrade</button>
+            </form>
+            {upgradeUploadMsg && <p style={{ marginTop: '12px', color: '#dc2626' }}>{upgradeUploadMsg}</p>}
+            <button onClick={() => setShowUpgradePayment(false)} style={{ marginTop: '16px', background: 'transparent', border: '1px solid #d1d5db', padding: '10px', width: '100%', borderRadius: '12px', cursor: 'pointer', color: '#6b7280' }}>Close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
